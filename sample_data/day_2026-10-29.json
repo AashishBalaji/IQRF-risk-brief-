@@ -1,0 +1,81 @@
+{
+  "_note": "Illustrative sample data, schema-matched to IQRF_V2's real Trade/PortfolioState dataclasses -- not exported from a live run. A rough day, deliberately constructed so current_equity vs peak_equity crosses a 6% drawdown -- the scenario the drawdown-limit check exists for.",
+  "portfolio": {
+    "current_equity": 201850.0,
+    "peak_equity": 215000.0,
+    "session_realized_pnl": -784.0,
+    "open_positions": [
+      {
+        "symbol": "HDFCLIFE",
+        "direction": "SHORT",
+        "entry_price": 650.0,
+        "stop_price": 658.0,
+        "quantity": 50,
+        "entry_timestamp": "2026-10-29T11:50:00",
+        "target_price": null
+      }
+    ]
+  },
+  "trades_today": [
+    {
+      "symbol": "BAJFINANCE",
+      "direction": "LONG",
+      "entry_timestamp": "2026-10-29T09:18:00",
+      "entry_price": 7200.0,
+      "exit_timestamp": "2026-10-29T09:40:00",
+      "exit_price": 7150.0,
+      "quantity": 8,
+      "exit_reason": "STOP",
+      "gross_pnl": -400.0,
+      "commission": 6.0,
+      "slippage_cost": 3.0,
+      "net_pnl": -409.0,
+      "r_multiple": -1.0
+    },
+    {
+      "symbol": "SBIN",
+      "direction": "SHORT",
+      "entry_timestamp": "2026-10-29T09:50:00",
+      "entry_price": 812.0,
+      "exit_timestamp": "2026-10-29T10:05:00",
+      "exit_price": 820.0,
+      "quantity": 40,
+      "exit_reason": "STOP",
+      "gross_pnl": -320.0,
+      "commission": 5.0,
+      "slippage_cost": 2.0,
+      "net_pnl": -327.0,
+      "r_multiple": -1.0
+    },
+    {
+      "symbol": "ICICIBANK",
+      "direction": "LONG",
+      "entry_timestamp": "2026-10-29T10:30:00",
+      "entry_price": 1265.0,
+      "exit_timestamp": "2026-10-29T10:58:00",
+      "exit_price": 1278.0,
+      "quantity": 25,
+      "exit_reason": "TARGET",
+      "gross_pnl": 325.0,
+      "commission": 4.0,
+      "slippage_cost": 2.0,
+      "net_pnl": 319.0,
+      "r_multiple": 1.3
+    },
+    {
+      "symbol": "TATAMOTORS",
+      "direction": "SHORT",
+      "entry_timestamp": "2026-10-29T11:20:00",
+      "entry_price": 980.0,
+      "exit_timestamp": "2026-10-29T11:45:00",
+      "exit_price": 992.0,
+      "quantity": 30,
+      "exit_reason": "STOP",
+      "gross_pnl": -360.0,
+      "commission": 5.0,
+      "slippage_cost": 2.0,
+      "net_pnl": -367.0,
+      "r_multiple": -1.0
+    }
+  ]
+}

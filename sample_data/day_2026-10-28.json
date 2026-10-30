@@ -1,0 +1,66 @@
+{
+  "_note": "Illustrative sample data, schema-matched to IQRF_V2's real Trade/PortfolioState dataclasses -- not exported from a live run. A steady, unremarkable day: deliberately the low-drama counterpart to day_2026-10-29.json.",
+  "portfolio": {
+    "current_equity": 204300.0,
+    "peak_equity": 215000.0,
+    "session_realized_pnl": 659.0,
+    "open_positions": [
+      {
+        "symbol": "RELIANCE",
+        "direction": "LONG",
+        "entry_price": 2940.5,
+        "stop_price": 2915.0,
+        "quantity": 20,
+        "entry_timestamp": "2026-10-28T10:05:00",
+        "target_price": 2995.0
+      }
+    ]
+  },
+  "trades_today": [
+    {
+      "symbol": "HDFCBANK",
+      "direction": "LONG",
+      "entry_timestamp": "2026-10-28T09:20:00",
+      "entry_price": 1652.0,
+      "exit_timestamp": "2026-10-28T10:02:00",
+      "exit_price": 1667.3,
+      "quantity": 30,
+      "exit_reason": "TARGET",
+      "gross_pnl": 459.0,
+      "commission": 9.0,
+      "slippage_cost": 3.0,
+      "net_pnl": 447.0,
+      "r_multiple": 1.8
+    },
+    {
+      "symbol": "TCS",
+      "direction": "SHORT",
+      "entry_timestamp": "2026-10-28T09:45:00",
+      "entry_price": 4120.0,
+      "exit_timestamp": "2026-10-28T10:15:00",
+      "exit_price": 4138.5,
+      "quantity": 10,
+      "exit_reason": "STOP",
+      "gross_pnl": -185.0,
+      "commission": 4.0,
+      "slippage_cost": 2.0,
+      "net_pnl": -191.0,
+      "r_multiple": -1.0
+    },
+    {
+      "symbol": "INFY",
+      "direction": "LONG",
+      "entry_timestamp": "2026-10-28T11:10:00",
+      "entry_price": 1810.0,
+      "exit_timestamp": "2026-10-28T11:40:00",
+      "exit_price": 1826.4,
+      "quantity": 25,
+      "exit_reason": "TARGET",
+      "gross_pnl": 410.0,
+      "commission": 5.0,
+      "slippage_cost": 2.0,
+      "net_pnl": 403.0,
+      "r_multiple": 1.6
+    }
+  ]
+}
