@@ -26,7 +26,7 @@ def test_offline_narrator_leads_with_drawdown_when_breached():
     summary = _summary_for("day_2026-10-29.json")
     brief = generate_brief_offline(summary)
     assert brief.startswith("Drawdown is at")
-    assert "past your 6% limit" in brief
+    assert "past your 20% limit" in brief
 
 
 def test_offline_narrator_omits_drawdown_sentence_when_comfortable():

@@ -42,16 +42,19 @@ class RiskSummary:
 def compute_risk_summary(
     portfolio: PortfolioState,
     trades_today: List[Trade],
-    drawdown_limit_pct: float = 0.06,
+    drawdown_limit_pct: float = 0.20,
 ) -> RiskSummary:
     """
     drawdown_limit_pct is the maximum current_equity drop from
     peak_equity the operator has decided to tolerate before their
-    own kill-switch/risk layer would act -- it is NOT read from
-    IQRF_V2's own config (this project doesn't import from it), so
-    the caller must supply the real figure if they want this
-    comparison to mean anything; it otherwise defaults to a generic
-    6% placeholder and the brief should be read with that caveat.
+    own kill-switch/risk layer would act. This project does not
+    import IQRF_V2's config (see README's "Why a separate project"),
+    so this default (0.20) is a value copied by hand from a one-time
+    read-only read of IQRF_V2's real src/config/settings.py
+    (MAX_DRAWDOWN_PERCENT = 20.0) on 2026-10-31, not a live link to
+    it -- if that setting changes later, this default will silently
+    go stale until someone updates it here too, or passes the real
+    current value explicitly via --drawdown-limit-pct.
     """
     day_realized_pnl = sum(t.net_pnl for t in trades_today)
 

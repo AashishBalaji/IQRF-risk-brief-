@@ -50,17 +50,18 @@ def test_rough_day_breaches_drawdown_limit():
     assert summary.stop_outs == 3
     assert summary.target_hits == 1
     assert summary.pnl_reconciliation_drift == 0.0
-    # 215000 peak, 201850 current = 6.12% drawdown, past the default 6% limit
-    assert summary.current_drawdown_pct == pytest.approx(0.0612, abs=1e-4)
+    # 215000 peak, 171000 current = 20.47% drawdown, past the real
+    # IQRF_V2 MAX_DRAWDOWN_PERCENT = 20.0 default used here
+    assert summary.current_drawdown_pct == pytest.approx(0.2047, abs=1e-4)
     assert summary.distance_to_drawdown_limit_pct < 0
 
 
 def test_custom_drawdown_limit_changes_the_verdict():
     portfolio, trades = _load("day_2026-10-29.json")
-    # the same rough day, but against a looser 10% limit, should no
-    # longer be breached -- proves the limit is a real parameter,
+    # the same rough day, but against a much looser 30% limit, should
+    # no longer be breached -- proves the limit is a real parameter,
     # not a hardcoded threshold
-    summary = compute_risk_summary(portfolio, trades, drawdown_limit_pct=0.10)
+    summary = compute_risk_summary(portfolio, trades, drawdown_limit_pct=0.30)
     assert summary.distance_to_drawdown_limit_pct > 0
 
 

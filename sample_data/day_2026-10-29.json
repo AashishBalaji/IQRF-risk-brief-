@@ -1,7 +1,7 @@
 {
-  "_note": "Illustrative sample data, schema-matched to IQRF_V2's real Trade/PortfolioState dataclasses -- not exported from a live run. A rough day, deliberately constructed so current_equity vs peak_equity crosses a 6% drawdown -- the scenario the drawdown-limit check exists for.",
+  "_note": "Illustrative sample data, schema-matched to IQRF_V2's real Trade/PortfolioState dataclasses -- not exported from a live run. A losing streak that has accumulated over several days (today's own trades are a modest -784, but current_equity vs peak_equity is already down ~20.5%), deliberately constructed to cross IQRF_V2's real MAX_DRAWDOWN_PERCENT = 20.0 (src/config/settings.py) -- the scenario the drawdown-limit check exists for.",
   "portfolio": {
-    "current_equity": 201850.0,
+    "current_equity": 171000.0,
     "peak_equity": 215000.0,
     "session_realized_pnl": -784.0,
     "open_positions": [

@@ -57,10 +57,12 @@ honestly what wasn't checked:
 - **Risk math (`risk_brief.py`)** — fully verified. 15/15 tests
   pass, run against two real sample days (`sample_data/`): a steady
   day and a day deliberately constructed so `current_equity` vs
-  `peak_equity` crosses a 6% drawdown. The drawdown-breach
-  detection, the P&L reconciliation drift check, and the
-  custom-limit override are all exercised against real numbers, not
-  mocked.
+  `peak_equity` crosses IQRF_V2's real `MAX_DRAWDOWN_PERCENT = 20.0`
+  (read once, read-only, from `src/config/settings.py` — the default
+  here, `0.20`, is a value copied by hand, not a live link to that
+  file). The drawdown-breach detection, the P&L reconciliation drift
+  check, and the custom-limit override are all exercised against
+  real numbers, not mocked.
 - **Offline narrator (`generate_brief_offline`)** — fully verified,
   run end to end against both sample days; this is the path
   actually demonstrated in this README's example output.
@@ -90,8 +92,8 @@ honestly what wasn't checked:
 
 ```
 $ python3 generate_daily_brief.py sample_data/day_2026-10-29.json --offline
-[telegram dry-run, level=WARNING] Drawdown is at 6.1%, past your 6% limit. Day P&L is -784.0 across 4 trades (1 targets, 3 stops, 0 signal exits). Open exposure is 32500.0 across 1 position(s).
-Drawdown is at 6.1%, past your 6% limit. Day P&L is -784.0 across 4 trades (1 targets, 3 stops, 0 signal exits). Open exposure is 32500.0 across 1 position(s).
+[telegram dry-run, level=WARNING] Drawdown is at 20.5%, past your 20% limit. Day P&L is -784.0 across 4 trades (1 targets, 3 stops, 0 signal exits). Open exposure is 32500.0 across 1 position(s).
+Drawdown is at 20.5%, past your 20% limit. Day P&L is -784.0 across 4 trades (1 targets, 3 stops, 0 signal exits). Open exposure is 32500.0 across 1 position(s).
 ```
 
 ## Wiring into IQRF_V2 (documented, not done here)

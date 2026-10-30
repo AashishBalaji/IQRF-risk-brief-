@@ -33,9 +33,10 @@ def main(argv=None) -> int:
         help="path to a day's {portfolio, trades_today} JSON",
     )
     parser.add_argument(
-        "--drawdown-limit-pct", type=float, default=0.06,
+        "--drawdown-limit-pct", type=float, default=0.20,
         help="your own real drawdown-limit fraction "
-             "(default: 0.06 placeholder -- see risk_brief.py)",
+             "(default: 0.20, copied from IQRF_V2's MAX_DRAWDOWN_PERCENT "
+             "on 2026-10-31 -- see risk_brief.py)",
     )
     parser.add_argument(
         "--offline", action="store_true",
