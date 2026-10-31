@@ -42,7 +42,13 @@ Given a day's trades and current portfolio state, it:
    "What's actually verified" below). Any pattern flags from step 2
    are appended as plain, deterministic text — the LLM never
    re-derives or embellishes a flag that's already been decided.
-4. Delivers it over Telegram — `telegram_notifier.py`.
+4. Decides whether today's fired flags are worth interrupting the
+   trader for right now, worth holding for the end-of-day digest, or
+   worth suppressing as noise — `escalation_judge.py`. This is the
+   one place in the whole pipeline a model actually judges something
+   rather than narrating a decision a threshold already made. See
+   "Escalation layer" below.
+5. Delivers it over Telegram — `telegram_notifier.py`.
 
 Run it against one hand-built sample day:
 
@@ -86,6 +92,50 @@ pretending every detector is equally interesting on this particular
 dataset would be the same kind of overselling this whole project is
 trying to avoid.
 
+## Escalation layer (`escalation_judge.py`)
+
+A round-table review of v1 surfaced a real gap underneath the
+"agentic" pattern layer above: every one of those six detectors is
+still a fixed threshold. Nothing in the pipeline ever *weighs* flags
+against each other, or against their own recent history — a single
+INFO-level `exit_reason_skew` on day one means something different
+from the same flag firing for the fifth day running, and two WARNING
+flags together aren't just "twice as bad" as one. That's a judgment
+call, not a threshold, which is exactly what a model is for — so
+`escalation_judge.py` asks a model exactly one question: given
+today's already-fired flags (nothing recomputed, nothing
+re-derived) plus how often each has fired over the last 5 trading
+days, should this `NOTIFY_NOW`, `HOLD_FOR_DIGEST`, or
+`SUPPRESS_AS_NOISE`? Same "math decides, model only judges or
+narrates" discipline as `llm_narrative.py` — the model is never
+shown raw trades and never asked to produce a number, only a label
+and a one-line rationale.
+
+A deterministic `judge_escalation_offline` exists alongside the real
+API call (`judge_escalation`), same pattern as
+`generate_brief`/`generate_brief_offline`: it's the floor the model
+is meant to improve on, not a hidden second judge, used by tests and
+as the graceful degrade if the live call fails (a broken network
+should never mean a real WARNING gets silently dropped).
+
+**Real finding, running the offline rule against the real 13-day
+history (`python3 multi_day_runner.py --offline`):** 2 of the 13
+real days hold at `HOLD_FOR_DIGEST` (2026-06-01, before
+`symbol_repeat_loser` has had time to recur) and the other 11
+escalate to `NOTIFY_NOW` — mostly because `symbol_repeat_loser`
+recurs on 5 of the last 5 days for almost the entire window (see the
+"Honest caveat" above: single-symbol fixture). Said plainly, the
+offline rule saturates to "notify" almost immediately on this
+particular dataset and stays there — which is itself an honest
+finding about the *rule*, not a reason to hide it: a real triage
+layer needs more than a 5-day recurrence count to stay useful on a
+single-symbol history, and a multi-symbol trade log is the real test
+this escalation layer hasn't had yet. The live model path
+(`judge_escalation`) is implemented but not run against this real
+data in this sandbox — see "What's actually verified" below — so
+whether it behaves less bluntly than the offline floor on these same
+13 days is still an open question, not a claim this README makes.
+
 ## Real multi-day history, and real usage
 
 v1 shipped with two hand-written sample days (`sample_data/`) —
@@ -116,11 +166,12 @@ order, day by day, and both the risk numbers and the pattern flags
 above are genuine outputs of that run, not illustrations.
 
 `multi_day_runner.py` runs the full agent (risk numbers + pattern
-detection + narration + Telegram delivery) across all 13 real days in
-order, each day only ever seeing the days before it (same
-no-lookahead discipline as IQRF_V2's own walk-forward split) —
-`python3 multi_day_runner.py --offline` reproduces the findings table
-above end to end.
+detection + escalation judgment + narration + Telegram delivery)
+across all 13 real days in order, each day only ever seeing the days
+before it (same no-lookahead discipline as IQRF_V2's own
+walk-forward split) — `python3 multi_day_runner.py --offline`
+reproduces the findings table above, plus the escalation decisions
+in "Escalation layer" above, end to end.
 
 **Known gap, stated plainly:** `signal_exit_root_cause_report.json`
 stores `net_pnl` and `r_multiple` per trade but not a
@@ -171,8 +222,28 @@ honestly what wasn't checked:
   fully verified: loads all 13 real days, all 92 real trades, and
   the real cross-instrument loss fractions, with the exact counts
   asserted in tests.
-- **34/34 tests pass** across `risk_brief.py`, `llm_narrative.py`,
-  `telegram_notifier.py`, `pattern_detector.py`, and `real_history.py`.
+- **Escalation judgment (`escalation_judge.py`)** — the offline rule
+  (`judge_escalation_offline`) is fully verified: isolated tests pin
+  down exactly when it suppresses, holds, or notifies, including the
+  recurrence-weighted cases (a lone recurring flag notifies even
+  without a second WARNING; a gap then a re-fire doesn't inherit an
+  old streak), plus the end-to-end real 13-day run documented in
+  "Escalation layer" above. The rolling fire-history bookkeeping that
+  feeds it (`multi_day_runner._update_fire_history`) has its own
+  tests, including the window-cap and the no-false-carryover case.
+  The **live model call (`judge_escalation`)** is implemented against
+  the real `anthropic` SDK, same model and client pattern as
+  `generate_brief`, but **not independently run** in this sandbox for
+  the same reason: no bare `ANTHROPIC_API_KEY` available. Every path
+  through `multi_day_runner.py` falls back to the offline rule on any
+  failure, so a broken live call degrades the judgment, never drops a
+  real WARNING. To verify the live path yourself: `export
+  ANTHROPIC_API_KEY=...` and run `multi_day_runner.py` without
+  `--offline`.
+- **46/46 tests pass** across `risk_brief.py`, `llm_narrative.py`,
+  `telegram_notifier.py`, `pattern_detector.py`, `real_history.py`,
+  `escalation_judge.py`, and `multi_day_runner.py`. Flake8 clean
+  (`--max-line-length=110 --exclude=real_data`).
 - **Offline narrator (`generate_brief_offline`)** — fully verified,
   run end to end against both sample days; this is the path
   actually demonstrated in this README's example output.
@@ -220,13 +291,20 @@ Pattern alerts (multi-day):
   ⚠ [overtrading_frequency] Today's 13 trades is a real outlier against the last 3 days' average of 7.0 (z=7.35) -- worth checking for overtrading rather than assuming it's just an active day.
   ℹ [exit_reason_skew] 31/34 exits over the last 4 days (91%) were SIGNAL_EXIT, not STOP or TARGET -- worth checking whether the exit logic is cutting trades short rather than the strategy having a genuinely bad run.
   ⚠ [cross_instrument_stress] 67% of IQRF_V2's tracked instruments lost money on 2026-06-04 -- a market-wide stress day, not a problem specific to this symbol's trades.
+Escalation: NOTIFY_NOW -- 3 WARNING flag(s) and/or a flag recurring 4 of the last 5 days (offline rule, not the model).
 
 [2026-06-11] Day P&L is -3701.67 across 9 trades (0 targets, 2 stops, 7 signal exits). Open exposure is 0 across 0 position(s). Data check: today's trades sum to a P&L that differs from the portfolio's own session figure by -1265.71.
 Pattern alerts (multi-day):
   ⚠ [symbol_repeat_loser] RELIANCE has lost money on 20 separate trades over the last 5 trading days -- worth checking whether this symbol fits the strategy at all right now, rather than re-trading it unchanged.
   ℹ [exit_reason_skew] 20/32 exits over the last 5 days (62%) were SIGNAL_EXIT, not STOP or TARGET -- worth checking whether the exit logic is cutting trades short rather than the strategy having a genuinely bad run.
   ⚠ [cross_instrument_stress] 83% of IQRF_V2's tracked instruments lost money on 2026-06-11 -- a market-wide stress day, not a problem specific to this symbol's trades.
+Escalation: NOTIFY_NOW -- 2 WARNING flag(s) and/or a flag recurring 5 of the last 5 days (offline rule, not the model).
 ```
+
+Full 13-day escalation tally from this same run: 2 days hold for the
+digest (`HOLD_FOR_DIGEST`), 11 notify now (`NOTIFY_NOW`), 0 suppressed
+— see "Escalation layer" above for what that actually means (and
+doesn't).
 
 ## Wiring into IQRF_V2 (documented, not done here)
 
@@ -255,12 +333,13 @@ this project exists specifically to avoid.
 models.py                 Trade/Position/PortfolioState (schema-matched to IQRF_V2, independent)
 risk_brief.py              real risk-metric computation
 pattern_detector.py        agentic cross-day pattern detection (task A)
+escalation_judge.py        the model's one real judgment call: notify / hold / suppress
 real_history.py            loads the real 13-day RELIANCE history
-multi_day_runner.py        CLI: runs the agent across the real history (task B)
+multi_day_runner.py        CLI: runs the agent across the real history, incl. escalation (task B)
 llm_narrative.py           Claude API narration + offline fallback
 telegram_notifier.py       Telegram Bot API delivery, dry-run by default
 generate_daily_brief.py    CLI entrypoint for a single day
 sample_data/                two hand-built illustrative sample days
 real_data/                  the real 13-day RELIANCE history, extracted read-only from IQRF_V2's own reports
-tests/                     34 tests, all passing
+tests/                     46 tests, all passing
 ```
