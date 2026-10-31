@@ -188,6 +188,27 @@ check surfaces that disagreement as a real finding on nearly every
 day, which is arguably the single most honest thing about this
 fixture.
 
+## Real usage log (`real_usage_log.md`)
+
+The backtest replay above is real historical data, but it's still a
+batch run, not evidence that anyone actually *uses* this day to day.
+`live_usage_check.py` is the honest start of that evidence: it takes
+a real live quote snapshot (fetched via the same authenticated Kite
+MCP connector as the demo artifact's "Live market pulse" tab) for
+the real 12-instrument basket, reuses this project's own
+`detect_cross_instrument_stress` against it, and runs the result
+through `judge_escalation_offline` — then appends what actually
+happened, with a real UTC timestamp, to `real_usage_log.md`. Each
+entry there is a real check, not a staged one; `real_usage_log.md`'s
+own header states plainly that the account behind it has no open
+positions, trades, or orders right now, so these are real
+market-data signal checks and real escalation decisions, not live
+trading activity — a distinction kept explicit rather than blurred.
+This is one real entry so far (2026-10-30 market data: 5/12 basket
+instruments down, 41.7%, below the 60% stress threshold, correctly
+suppressed as noise), not a backfilled history — more entries land
+here only as the project actually gets run again, by hand for now.
+
 ## Why a separate project
 
 I was explicit with myself about this while building it: this
@@ -339,6 +360,8 @@ multi_day_runner.py        CLI: runs the agent across the real history, incl. es
 llm_narrative.py           Claude API narration + offline fallback
 telegram_notifier.py       Telegram Bot API delivery, dry-run by default
 generate_daily_brief.py    CLI entrypoint for a single day
+live_usage_check.py        real usage-log entry generator (task B): real live Kite quotes -> real decision
+real_usage_log.md          the append-only real usage log live_usage_check.py writes to
 sample_data/                two hand-built illustrative sample days
 real_data/                  the real 13-day RELIANCE history, extracted read-only from IQRF_V2's own reports
 tests/                     46 tests, all passing
