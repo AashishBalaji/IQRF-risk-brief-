@@ -1,0 +1,1986 @@
+{
+  "_provenance": {
+    "symbol": "RELIANCE",
+    "source_repo": "IQRF_V2 (AashishBalaji/IQRF-), read-only clone at /home/claude/iqrf-",
+    "source_files": [
+      "data/signal_exit_root_cause_report.json (per_trade: 92 real trades)",
+      "data/cross_sectional_diagnosis_report.json (per_instrument.RELIANCE.daily_pnl, loss_clustering.worst_days)"
+    ],
+    "extracted_on": "2026-10-31",
+    "nature": "A real backtest IQRF_V2 itself already ran and recorded, over real historical RELIANCE 1-min data, 2026-06-01 to 2026-06-17 (13 real trading days). Not synthetic, not hand-authored like sample_data/ -- but also not live money or today's trades. Extracted strictly read-only: no IQRF_V2 code was executed, no IQRF_V2 file was modified.",
+    "known_gaps": "The source report stores net_pnl and r_multiple per trade but not a quantity/commission/slippage breakdown, so each trade here sets quantity=1, gross_pnl=net_pnl, commission=0, slippage_cost=0 rather than inventing a split IQRF_V2 itself didn't report. day_realized_pnl_from_trades is cross-checked against day_realized_pnl_reference_report (IQRF_V2's own independently-computed daily_pnl) below; small drift is expected since IQRF_V2's daily_pnl already nets commission/slippage that per_trade's net_pnl may compute slightly differently -- this drift is itself surfaced through this agent's own pnl_reconciliation_drift check.",
+    "starting_capital": 1000000
+  },
+  "days": [
+    {
+      "date": "2026-06-01",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-01 11:51:00",
+          "entry_price": 1328.86,
+          "exit_timestamp": "2026-06-01 11:57:00",
+          "exit_price": 1326.54,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -478.0,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -478.0,
+          "r_multiple": -0.6063,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 6
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-01 11:59:00",
+          "entry_price": 1325.84,
+          "exit_timestamp": "2026-06-01 12:05:00",
+          "exit_price": 1327.66,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -384.09,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -384.09,
+          "r_multiple": -0.346,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 6
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-01 12:06:00",
+          "entry_price": 1327.86,
+          "exit_timestamp": "2026-06-01 12:11:00",
+          "exit_price": 1324.14,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -741.15,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -741.15,
+          "r_multiple": -0.9633,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-01 12:12:00",
+          "entry_price": 1323.64,
+          "exit_timestamp": "2026-06-01 12:41:00",
+          "exit_price": 1327.66,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -798.96,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -798.96,
+          "r_multiple": -0.5237,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 29
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-01 12:42:00",
+          "entry_price": 1325.94,
+          "exit_timestamp": "2026-06-01 12:56:00",
+          "exit_price": 1329.26,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -665.63,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -665.63,
+          "r_multiple": -0.9097,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 14
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-01 13:04:00",
+          "entry_price": 1325.74,
+          "exit_timestamp": "2026-06-01 13:40:00",
+          "exit_price": 1325.36,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 30.36,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 30.36,
+          "r_multiple": 0.0352,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 36
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-01 13:55:00",
+          "entry_price": 1321.64,
+          "exit_timestamp": "2026-06-02 09:15:00",
+          "exit_price": 1314.45,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 1314.99,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 1314.99,
+          "r_multiple": 1.5212,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 95
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -1722.48,
+      "day_realized_pnl_reference_report": 0.0,
+      "end_of_day_equity": 998277.52,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-02",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-02 09:16:00",
+          "entry_price": 1310.74,
+          "exit_timestamp": "2026-06-02 09:17:00",
+          "exit_price": 1313.46,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -555.66,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -555.66,
+          "r_multiple": -0.2524,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-02 09:19:00",
+          "entry_price": 1319.26,
+          "exit_timestamp": "2026-06-02 10:05:00",
+          "exit_price": 1314.44,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -951.24,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -951.24,
+          "r_multiple": -0.3848,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 46
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-02 10:18:00",
+          "entry_price": 1312.24,
+          "exit_timestamp": "2026-06-02 10:19:00",
+          "exit_price": 1313.76,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -327.17,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -327.17,
+          "r_multiple": -0.1599,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-02 10:21:00",
+          "entry_price": 1313.24,
+          "exit_timestamp": "2026-06-02 12:51:00",
+          "exit_price": 1310.55,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 469.65,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 469.65,
+          "r_multiple": 0.2533,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 150
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-02 12:56:00",
+          "entry_price": 1311.76,
+          "exit_timestamp": "2026-06-02 15:03:00",
+          "exit_price": 1311.64,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -61.23,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -61.23,
+          "r_multiple": -0.0291,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 127
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-02 15:09:00",
+          "entry_price": 1312.74,
+          "exit_timestamp": "2026-06-02 15:10:00",
+          "exit_price": 1315.06,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -479.12,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -479.12,
+          "r_multiple": -0.5645,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -1904.77,
+      "day_realized_pnl_reference_report": 1430.18,
+      "end_of_day_equity": 996372.75,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-03",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-03 09:16:00",
+          "entry_price": 1313.14,
+          "exit_timestamp": "2026-06-03 09:21:00",
+          "exit_price": 1307.27,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 1073.78,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 1073.78,
+          "r_multiple": 1.3907,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-03 10:05:00",
+          "entry_price": 1305.35,
+          "exit_timestamp": "2026-06-03 10:21:00",
+          "exit_price": 1310.15,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -958.11,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -958.11,
+          "r_multiple": -0.9356,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 16
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-03 10:22:00",
+          "entry_price": 1310.96,
+          "exit_timestamp": "2026-06-03 10:42:00",
+          "exit_price": 1308.35,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -536.23,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -536.23,
+          "r_multiple": -0.3148,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 20
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-03 10:44:00",
+          "entry_price": 1308.45,
+          "exit_timestamp": "2026-06-03 12:29:00",
+          "exit_price": 1303.65,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 871.8,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 871.8,
+          "r_multiple": 0.9616,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 105
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-03 12:36:00",
+          "entry_price": 1309.65,
+          "exit_timestamp": "2026-06-03 12:54:00",
+          "exit_price": 1305.65,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -802.97,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -802.97,
+          "r_multiple": -0.428,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 18
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-03 13:19:00",
+          "entry_price": 1305.55,
+          "exit_timestamp": "2026-06-03 13:29:00",
+          "exit_price": 1308.75,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -651.53,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -651.53,
+          "r_multiple": -0.8849,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 10
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-03 13:40:00",
+          "entry_price": 1309.85,
+          "exit_timestamp": "2026-06-03 14:10:00",
+          "exit_price": 1315.61,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 1054.87,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 1054.87,
+          "r_multiple": 1.3334,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 30
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-03 15:17:00",
+          "entry_price": 1314.96,
+          "exit_timestamp": "2026-06-03 15:28:00",
+          "exit_price": 1312.34,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -537.19,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -537.19,
+          "r_multiple": -0.4896,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 11
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -485.58,
+      "day_realized_pnl_reference_report": 392.44,
+      "end_of_day_equity": 995887.17,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": 0.75
+    },
+    {
+      "date": "2026-06-04",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 09:16:00",
+          "entry_price": 1302.55,
+          "exit_timestamp": "2026-06-04 09:17:00",
+          "exit_price": 1306.55,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -807.8,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -807.8,
+          "r_multiple": -0.3275,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 10:28:00",
+          "entry_price": 1304.45,
+          "exit_timestamp": "2026-06-04 11:33:00",
+          "exit_price": 1303.95,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 54.85,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 54.85,
+          "r_multiple": 0.0629,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 65
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-04 11:36:00",
+          "entry_price": 1305.15,
+          "exit_timestamp": "2026-06-04 11:37:00",
+          "exit_price": 1303.95,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -270.57,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -270.57,
+          "r_multiple": -0.3173,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-04 11:42:00",
+          "entry_price": 1307.75,
+          "exit_timestamp": "2026-06-04 11:57:00",
+          "exit_price": 1305.75,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -423.19,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -423.19,
+          "r_multiple": -0.3141,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 15
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 12:00:00",
+          "entry_price": 1303.85,
+          "exit_timestamp": "2026-06-04 12:07:00",
+          "exit_price": 1307.65,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -767.85,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -767.85,
+          "r_multiple": -0.7633,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 7
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-04 12:08:00",
+          "entry_price": 1308.25,
+          "exit_timestamp": "2026-06-04 12:13:00",
+          "exit_price": 1304.05,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -842.02,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -842.02,
+          "r_multiple": -0.7805,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 12:14:00",
+          "entry_price": 1304.45,
+          "exit_timestamp": "2026-06-04 12:55:00",
+          "exit_price": 1302.15,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 398.39,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 398.39,
+          "r_multiple": 0.3687,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 41
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-04 14:10:00",
+          "entry_price": 1304.55,
+          "exit_timestamp": "2026-06-04 14:11:00",
+          "exit_price": 1302.55,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -422.92,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -422.92,
+          "r_multiple": -0.4656,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 14:21:00",
+          "entry_price": 1301.95,
+          "exit_timestamp": "2026-06-04 14:31:00",
+          "exit_price": 1304.45,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -518.69,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -518.69,
+          "r_multiple": -0.7222,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 10
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-04 14:34:00",
+          "entry_price": 1303.95,
+          "exit_timestamp": "2026-06-04 14:35:00",
+          "exit_price": 1302.75,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -269.87,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -269.87,
+          "r_multiple": -0.3402,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 14:38:00",
+          "entry_price": 1302.55,
+          "exit_timestamp": "2026-06-04 14:41:00",
+          "exit_price": 1304.75,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -460.97,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -460.97,
+          "r_multiple": -0.7646,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 3
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-04 14:47:00",
+          "entry_price": 1307.05,
+          "exit_timestamp": "2026-06-04 14:53:00",
+          "exit_price": 1302.15,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -974.07,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -974.07,
+          "r_multiple": -0.8048,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 6
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-04 14:54:00",
+          "entry_price": 1301.65,
+          "exit_timestamp": "2026-06-04 15:06:00",
+          "exit_price": 1304.35,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -556.07,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -556.07,
+          "r_multiple": -0.4374,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 12
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -5860.78,
+      "day_realized_pnl_reference_report": -3621.32,
+      "end_of_day_equity": 990026.39,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": 0.6666666666666666
+    },
+    {
+      "date": "2026-06-05",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 09:16:00",
+          "entry_price": 1301.05,
+          "exit_timestamp": "2026-06-05 09:47:00",
+          "exit_price": 1301.05,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -40.2,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -40.2,
+          "r_multiple": -0.0294,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 31
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 10:12:00",
+          "entry_price": 1298.95,
+          "exit_timestamp": "2026-06-05 10:40:00",
+          "exit_price": 1294.6,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 791.74,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 791.74,
+          "r_multiple": 1.2006,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 28
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 11:41:00",
+          "entry_price": 1293.75,
+          "exit_timestamp": "2026-06-05 12:09:00",
+          "exit_price": 1296.35,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -538.38,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -538.38,
+          "r_multiple": -0.8142,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 28
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 12:11:00",
+          "entry_price": 1295.05,
+          "exit_timestamp": "2026-06-05 12:16:00",
+          "exit_price": 1298.1,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -623.91,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -623.91,
+          "r_multiple": -1.0685,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-05 12:28:00",
+          "entry_price": 1301.25,
+          "exit_timestamp": "2026-06-05 12:42:00",
+          "exit_price": 1295.35,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -1165.96,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -1165.96,
+          "r_multiple": -0.6985,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 14
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 12:43:00",
+          "entry_price": 1294.25,
+          "exit_timestamp": "2026-06-05 13:55:00",
+          "exit_price": 1292.65,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 267.72,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 267.72,
+          "r_multiple": 0.1983,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 72
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 14:19:00",
+          "entry_price": 1290.85,
+          "exit_timestamp": "2026-06-05 14:44:00",
+          "exit_price": 1294.09,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -662.11,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -662.11,
+          "r_multiple": -1.0643,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 25
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-05 14:50:00",
+          "entry_price": 1293.25,
+          "exit_timestamp": "2026-06-08 09:15:00",
+          "exit_price": 1288.21,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 926.39,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 926.39,
+          "r_multiple": 1.3275,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 40
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -1044.71,
+      "day_realized_pnl_reference_report": -1799.36,
+      "end_of_day_equity": 988981.68,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": 0.6666666666666666
+    },
+    {
+      "date": "2026-06-08",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-08 09:16:00",
+          "entry_price": 1278.36,
+          "exit_timestamp": "2026-06-08 09:40:00",
+          "exit_price": 1278.44,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -55.2,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -55.2,
+          "r_multiple": -0.0154,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 24
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-08 09:49:00",
+          "entry_price": 1279.54,
+          "exit_timestamp": "2026-06-08 10:26:00",
+          "exit_price": 1276.22,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -683.54,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -683.54,
+          "r_multiple": -1.0622,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 37
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-08 11:55:00",
+          "entry_price": 1277.04,
+          "exit_timestamp": "2026-06-08 11:56:00",
+          "exit_price": 1275.16,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -404.45,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -404.45,
+          "r_multiple": -0.6479,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-08 12:25:00",
+          "entry_price": 1276.34,
+          "exit_timestamp": "2026-06-08 12:30:00",
+          "exit_price": 1274.36,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -427.05,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -427.05,
+          "r_multiple": -0.6388,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-08 12:51:00",
+          "entry_price": 1278.04,
+          "exit_timestamp": "2026-06-08 12:52:00",
+          "exit_price": 1276.36,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -368.1,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -368.1,
+          "r_multiple": -0.3992,
+          "metadata": {
+            "entry_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-08 13:07:00",
+          "entry_price": 1274.46,
+          "exit_timestamp": "2026-06-08 14:28:00",
+          "exit_price": 1267.74,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 1276.0,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 1276.0,
+          "r_multiple": 1.5094,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 81
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -662.34,
+      "day_realized_pnl_reference_report": 6797.39,
+      "end_of_day_equity": 988319.34,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-09",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-09 09:16:00",
+          "entry_price": 1269.53,
+          "exit_timestamp": "2026-06-09 09:43:00",
+          "exit_price": 1270.26,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 103.91,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 103.91,
+          "r_multiple": 0.0676,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 27
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-09 09:44:00",
+          "entry_price": 1269.37,
+          "exit_timestamp": "2026-06-09 11:58:00",
+          "exit_price": 1267.13,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 399.64,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 399.64,
+          "r_multiple": 0.3321,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 134
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-09 12:04:00",
+          "entry_price": 1264.37,
+          "exit_timestamp": "2026-06-09 13:03:00",
+          "exit_price": 1264.13,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 6.64,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 6.64,
+          "r_multiple": 0.0088,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 59
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-09 13:05:00",
+          "entry_price": 1261.37,
+          "exit_timestamp": "2026-06-09 14:44:00",
+          "exit_price": 1263.83,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -528.2,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -528.2,
+          "r_multiple": -0.7021,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 99
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-09 14:45:00",
+          "entry_price": 1264.73,
+          "exit_timestamp": "2026-06-10 09:15:00",
+          "exit_price": 1277.12,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 2410.9,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 2410.9,
+          "r_multiple": 1.7428,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 45
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": 2392.89,
+      "day_realized_pnl_reference_report": -726.64,
+      "end_of_day_equity": 990712.23,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": 0.75
+    },
+    {
+      "date": "2026-06-10",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-10 09:16:00",
+          "entry_price": 1287.34,
+          "exit_timestamp": "2026-06-10 10:03:00",
+          "exit_price": 1290.35,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 546.37,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 546.37,
+          "r_multiple": 0.1342,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 47
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-10 10:04:00",
+          "entry_price": 1290.05,
+          "exit_timestamp": "2026-06-10 12:24:00",
+          "exit_price": 1271.7,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 3525.98,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 3525.98,
+          "r_multiple": 1.6431,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 140
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-10 14:13:00",
+          "entry_price": 1265.97,
+          "exit_timestamp": "2026-06-10 15:14:00",
+          "exit_price": 1258.7,
+          "quantity": 1,
+          "exit_reason": "END_OF_DATA",
+          "gross_pnl": 1404.03,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 1404.03,
+          "r_multiple": 1.3323,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 61
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-10 15:22:00",
+          "entry_price": 1258.67,
+          "exit_timestamp": "2026-06-11 09:47:00",
+          "exit_price": 1263.16,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -931.68,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -931.68,
+          "r_multiple": -1.0449,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 40
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": 4544.7,
+      "day_realized_pnl_reference_report": -207.56,
+      "end_of_day_equity": 995256.93,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-11",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-11 10:00:00",
+          "entry_price": 1258.37,
+          "exit_timestamp": "2026-06-11 10:01:00",
+          "exit_price": 1260.53,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -468.4,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -468.4,
+          "r_multiple": -0.2991,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-11 10:25:00",
+          "entry_price": 1265.93,
+          "exit_timestamp": "2026-06-11 13:21:00",
+          "exit_price": 1266.17,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 6.17,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 6.17,
+          "r_multiple": 0.0034,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 176
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-11 13:23:00",
+          "entry_price": 1264.77,
+          "exit_timestamp": "2026-06-11 13:52:00",
+          "exit_price": 1267.33,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -546.26,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -546.26,
+          "r_multiple": -0.3954,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 29
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-11 13:55:00",
+          "entry_price": 1267.73,
+          "exit_timestamp": "2026-06-11 14:29:00",
+          "exit_price": 1266.87,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -210.79,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -210.79,
+          "r_multiple": -0.2677,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 34
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-11 14:30:00",
+          "entry_price": 1267.93,
+          "exit_timestamp": "2026-06-11 14:39:00",
+          "exit_price": 1267.97,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -33.69,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -33.69,
+          "r_multiple": -0.0535,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 9
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-11 14:40:00",
+          "entry_price": 1269.63,
+          "exit_timestamp": "2026-06-11 14:47:00",
+          "exit_price": 1265.43,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -866.1,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -866.1,
+          "r_multiple": -1.0484,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 7
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-11 14:50:00",
+          "entry_price": 1268.23,
+          "exit_timestamp": "2026-06-11 14:51:00",
+          "exit_price": 1265.67,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -544.72,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -544.72,
+          "r_multiple": -0.7916,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-11 15:01:00",
+          "entry_price": 1264.47,
+          "exit_timestamp": "2026-06-11 15:02:00",
+          "exit_price": 1265.13,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -170.9,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -170.9,
+          "r_multiple": -0.1276,
+          "metadata": {
+            "entry_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 1
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-11 15:03:00",
+          "entry_price": 1264.37,
+          "exit_timestamp": "2026-06-12 09:15:00",
+          "exit_price": 1268.57,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -866.98,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -866.98,
+          "r_multiple": -1.0484,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 27
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -3701.67,
+      "day_realized_pnl_reference_report": -2435.96,
+      "end_of_day_equity": 991555.26,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": 0.8333333333333334
+    },
+    {
+      "date": "2026-06-12",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-12 09:36:00",
+          "entry_price": 1270.56,
+          "exit_timestamp": "2026-06-12 11:19:00",
+          "exit_price": 1270.63,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -53.82,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -53.82,
+          "r_multiple": -0.0227,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 103
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-12 11:20:00",
+          "entry_price": 1270.53,
+          "exit_timestamp": "2026-06-12 11:22:00",
+          "exit_price": 1269.07,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -328.04,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -328.04,
+          "r_multiple": -0.3637,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 2
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-12 12:05:00",
+          "entry_price": 1269.37,
+          "exit_timestamp": "2026-06-12 12:30:00",
+          "exit_price": 1264.36,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 940.96,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 940.96,
+          "r_multiple": 1.5978,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 25
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-12 13:31:00",
+          "entry_price": 1271.04,
+          "exit_timestamp": "2026-06-12 14:39:00",
+          "exit_price": 1285.93,
+          "quantity": 1,
+          "exit_reason": "TARGET",
+          "gross_pnl": 2879.09,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 2879.09,
+          "r_multiple": 1.6885,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 68
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": 3438.19,
+      "day_realized_pnl_reference_report": 2385.04,
+      "end_of_day_equity": 994993.45,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-15",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 09:19:00",
+          "entry_price": 1309.25,
+          "exit_timestamp": "2026-06-15 09:21:00",
+          "exit_price": 1314.66,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -1072.05,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -1072.05,
+          "r_multiple": -0.3291,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 2
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-15 09:49:00",
+          "entry_price": 1317.96,
+          "exit_timestamp": "2026-06-15 10:10:00",
+          "exit_price": 1313.09,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -962.72,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -962.72,
+          "r_multiple": -1.0434,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 21
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-15 10:32:00",
+          "entry_price": 1316.86,
+          "exit_timestamp": "2026-06-15 10:44:00",
+          "exit_price": 1312.04,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -951.51,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -951.51,
+          "r_multiple": -1.0109,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 12
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 10:49:00",
+          "entry_price": 1312.14,
+          "exit_timestamp": "2026-06-15 11:20:00",
+          "exit_price": 1314.86,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -554.62,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -554.62,
+          "r_multiple": -0.7364,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 31
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-15 11:21:00",
+          "entry_price": 1314.66,
+          "exit_timestamp": "2026-06-15 11:49:00",
+          "exit_price": 1312.94,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -364.57,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -364.57,
+          "r_multiple": -0.4975,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 28
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 11:51:00",
+          "entry_price": 1312.44,
+          "exit_timestamp": "2026-06-15 12:14:00",
+          "exit_price": 1311.0,
+          "quantity": 1,
+          "exit_reason": "END_OF_DATA",
+          "gross_pnl": 233.42,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 233.42,
+          "r_multiple": 0.3267,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 23
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 12:20:00",
+          "entry_price": 1309.35,
+          "exit_timestamp": "2026-06-15 12:22:00",
+          "exit_price": 1310.55,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -270.91,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -270.91,
+          "r_multiple": -0.3178,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 2
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 12:25:00",
+          "entry_price": 1308.35,
+          "exit_timestamp": "2026-06-15 14:13:00",
+          "exit_price": 1308.05,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 15.71,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 15.71,
+          "r_multiple": 0.0151,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 108
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 14:28:00",
+          "entry_price": 1306.35,
+          "exit_timestamp": "2026-06-15 15:02:00",
+          "exit_price": 1308.65,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -481.29,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -481.29,
+          "r_multiple": -0.5639,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 34
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-15 15:12:00",
+          "entry_price": 1304.65,
+          "exit_timestamp": "2026-06-16 09:15:00",
+          "exit_price": 1310.01,
+          "quantity": 1,
+          "exit_reason": "STOP",
+          "gross_pnl": -1065.93,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -1065.93,
+          "r_multiple": -1.039,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 18
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -5474.47,
+      "day_realized_pnl_reference_report": -94.61,
+      "end_of_day_equity": 989518.98,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-16",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-16 09:42:00",
+          "entry_price": 1315.06,
+          "exit_timestamp": "2026-06-16 15:07:00",
+          "exit_price": 1330.83,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": 2955.63,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 2955.63,
+          "r_multiple": 1.2593,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 325
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": 2955.63,
+      "day_realized_pnl_reference_report": 1379.63,
+      "end_of_day_equity": 992474.61,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    },
+    {
+      "date": "2026-06-17",
+      "trades": [
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 09:28:00",
+          "entry_price": 1329.36,
+          "exit_timestamp": "2026-06-17 12:08:00",
+          "exit_price": 1328.94,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -120.84,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -120.84,
+          "r_multiple": -0.0469,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 160
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 12:30:00",
+          "entry_price": 1329.26,
+          "exit_timestamp": "2026-06-17 12:44:00",
+          "exit_price": 1329.04,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -83.16,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -83.16,
+          "r_multiple": -0.0903,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 14
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 12:45:00",
+          "entry_price": 1329.76,
+          "exit_timestamp": "2026-06-17 13:09:00",
+          "exit_price": 1326.74,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -610.23,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -610.23,
+          "r_multiple": -0.8327,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 24
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 13:11:00",
+          "entry_price": 1328.96,
+          "exit_timestamp": "2026-06-17 13:16:00",
+          "exit_price": 1327.14,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -384.2,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -384.2,
+          "r_multiple": -0.4756,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 13:35:00",
+          "entry_price": 1330.36,
+          "exit_timestamp": "2026-06-17 13:40:00",
+          "exit_price": 1329.14,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -271.22,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -271.22,
+          "r_multiple": -0.3906,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 5
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 13:41:00",
+          "entry_price": 1330.26,
+          "exit_timestamp": "2026-06-17 13:53:00",
+          "exit_price": 1329.24,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -233.59,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -233.59,
+          "r_multiple": -0.3458,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 12
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 14:04:00",
+          "entry_price": 1331.07,
+          "exit_timestamp": "2026-06-17 14:07:00",
+          "exit_price": 1328.64,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -496.28,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -496.28,
+          "r_multiple": -0.7786,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 3
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-17 14:17:00",
+          "entry_price": 1326.94,
+          "exit_timestamp": "2026-06-17 14:21:00",
+          "exit_price": 1330.26,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -666.25,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -666.25,
+          "r_multiple": -0.6817,
+          "metadata": {
+            "entry_dominant_signal": "SWING_SIGNAL",
+            "exit_opposing_dominant_signal": "SWING_SIGNAL",
+            "bars_held": 4
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 14:23:00",
+          "entry_price": 1330.46,
+          "exit_timestamp": "2026-06-17 14:43:00",
+          "exit_price": 1327.24,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -645.98,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -645.98,
+          "r_multiple": -0.7183,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "bars_held": 20
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "SHORT",
+          "entry_timestamp": "2026-06-17 14:50:00",
+          "entry_price": 1327.34,
+          "exit_timestamp": "2026-06-17 14:54:00",
+          "exit_price": 1328.96,
+          "quantity": 1,
+          "exit_reason": "SIGNAL_EXIT",
+          "gross_pnl": -345.83,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": -345.83,
+          "r_multiple": -0.3761,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": "VOLUME_CLIMAX_SIGNAL",
+            "bars_held": 4
+          }
+        },
+        {
+          "symbol": "RELIANCE",
+          "direction": "LONG",
+          "entry_timestamp": "2026-06-17 14:55:00",
+          "entry_price": 1330.36,
+          "exit_timestamp": "2026-06-17 15:29:00",
+          "exit_price": 1332.1,
+          "quantity": 1,
+          "exit_reason": "END_OF_DATA",
+          "gross_pnl": 285.44,
+          "commission": 0.0,
+          "slippage_cost": 0.0,
+          "net_pnl": 285.44,
+          "r_multiple": 0.363,
+          "metadata": {
+            "entry_dominant_signal": "ANCHORED_VWAP_SIGNAL",
+            "exit_opposing_dominant_signal": null,
+            "bars_held": 34
+          }
+        }
+      ],
+      "day_realized_pnl_from_trades": -3572.14,
+      "day_realized_pnl_reference_report": -2383.91,
+      "end_of_day_equity": 988902.47,
+      "peak_equity_to_date": 1000000,
+      "cross_instrument_loss_fraction": null
+    }
+  ]
+}
