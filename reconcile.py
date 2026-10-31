@@ -22,6 +22,13 @@ No model is involved anywhere in this file. Matching, not-matching,
 and "there is a candidate but it's ambiguous" are all decided by
 plain arithmetic and timestamp comparisons, stated here as named
 constants, not buried in logic.
+
+Scope limitation, stated plainly rather than discovered later: this
+matcher assumes 1:1 cardinality -- one gateway settlement maps to at
+most one ledger entry, and vice versa. It does not model partial
+captures, split refunds, or a single payout batching several ledger
+entries into one settlement (N:1 or 1:N). A real reconciliation
+system eventually needs that; this one does not attempt it.
 """
 
 from __future__ import annotations

@@ -240,6 +240,13 @@ AI), alongside agentic payments, fraud detection, and smart payouts.
    directly as a real, standalone discrepancy — never sent to a
    model, since there's nothing to compare it against.
 
+**Scope limitation, stated plainly:** the matcher assumes 1:1
+cardinality — one gateway settlement maps to at most one ledger
+entry, and vice versa. It does not model partial captures, split
+refunds, or a single payout batching several ledger entries into
+one settlement (N:1 or 1:N). A production reconciliation system
+eventually needs that; this one does not attempt it.
+
 **Honest scope difference, stated plainly:** unlike IQRF_V2's real
 trade history, there is no real payment-gateway settlement file or
 real internal ledger available to this project. `synthetic_data/reconciliation_demo.json`
