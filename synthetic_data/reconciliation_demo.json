@@ -1,0 +1,46 @@
+{
+  "_provenance": {
+    "kind": "SYNTHETIC",
+    "note": "Hand-authored for this demo. Not real Razorpay data, not real transaction records, not drawn from any live system. Unlike real_data/ (extracted read-only from IQRF_V2's own real backtest reports), this file is clearly labeled synthetic because no real payment-gateway settlement file or internal ledger was available to this project. Amounts, timestamps, and reference IDs are invented but constructed to hold real, representative reconciliation scenarios: clean matches, rounding-level amount differences, a missing reference ID on one side, a next-day (T+1) settlement delay, and two genuinely unmatched one-sided entries.",
+    "generated_for": "iqrf-risk-brief reconciliation agent demo",
+    "scenario_count": 18
+  },
+  "gateway_settlements": [
+    {"gateway_txn_id": "GW-0001", "amount": 1250.00, "timestamp": "2026-10-30T10:15:00+05:30", "reference_id": "REF1001"},
+    {"gateway_txn_id": "GW-0002", "amount": 899.50, "timestamp": "2026-10-30T09:02:00+05:30", "reference_id": "REF1002"},
+    {"gateway_txn_id": "GW-0003", "amount": 15400.00, "timestamp": "2026-10-30T11:45:00+05:30", "reference_id": "REF1003"},
+    {"gateway_txn_id": "GW-0004", "amount": 320.00, "timestamp": "2026-10-30T12:10:00+05:30", "reference_id": "REF1004"},
+    {"gateway_txn_id": "GW-0005", "amount": 5600.75, "timestamp": "2026-10-30T13:20:00+05:30", "reference_id": "REF1005"},
+    {"gateway_txn_id": "GW-0006", "amount": 75.00, "timestamp": "2026-10-30T14:05:00+05:30", "reference_id": "REF1006"},
+    {"gateway_txn_id": "GW-0007", "amount": 2300.00, "timestamp": "2026-10-30T15:30:00+05:30", "reference_id": "REF1007"},
+    {"gateway_txn_id": "GW-0008", "amount": 980.00, "timestamp": "2026-10-30T16:12:00+05:30", "reference_id": "REF1008"},
+    {"gateway_txn_id": "GW-0009", "amount": 4500.00, "timestamp": "2026-10-30T17:00:00+05:30", "reference_id": "REF1009"},
+    {"gateway_txn_id": "GW-0010", "amount": 150.25, "timestamp": "2026-10-30T18:45:00+05:30", "reference_id": "REF1010"},
+    {"gateway_txn_id": "GW-0011", "amount": 1999.99, "timestamp": "2026-10-30T10:00:00+05:30", "reference_id": "REF1011"},
+    {"gateway_txn_id": "GW-0012", "amount": 749.00, "timestamp": "2026-10-30T11:00:00+05:30", "reference_id": "REF1012"},
+    {"gateway_txn_id": "GW-0013", "amount": 3200.00, "timestamp": "2026-10-30T09:30:00+05:30", "reference_id": "REF1013"},
+    {"gateway_txn_id": "GW-0014", "amount": 610.00, "timestamp": "2026-10-30T14:50:00+05:30", "reference_id": "REF1014"},
+    {"gateway_txn_id": "GW-0015", "amount": 1200.00, "timestamp": "2026-10-30T10:00:00+05:30", "reference_id": "REF1015"},
+    {"gateway_txn_id": "GW-0016", "amount": 450.00, "timestamp": "2026-10-30T16:00:00+05:30", "reference_id": "REF1016"},
+    {"gateway_txn_id": "GW-0017", "amount": 8888.00, "timestamp": "2026-10-30T20:00:00+05:30", "reference_id": "REF1017"}
+  ],
+  "internal_ledger": [
+    {"ledger_entry_id": "LG-0001", "amount": 1250.00, "timestamp": "2026-10-30T10:16:30+05:30", "reference_id": "REF1001"},
+    {"ledger_entry_id": "LG-0002", "amount": 899.50, "timestamp": "2026-10-30T09:03:10+05:30", "reference_id": "REF1002"},
+    {"ledger_entry_id": "LG-0003", "amount": 15400.00, "timestamp": "2026-10-30T11:46:05+05:30", "reference_id": "REF1003"},
+    {"ledger_entry_id": "LG-0004", "amount": 320.00, "timestamp": "2026-10-30T12:11:40+05:30", "reference_id": "REF1004"},
+    {"ledger_entry_id": "LG-0005", "amount": 5600.75, "timestamp": "2026-10-30T13:21:15+05:30", "reference_id": "REF1005"},
+    {"ledger_entry_id": "LG-0006", "amount": 75.00, "timestamp": "2026-10-30T14:06:00+05:30", "reference_id": "REF1006"},
+    {"ledger_entry_id": "LG-0007", "amount": 2300.00, "timestamp": "2026-10-30T15:31:50+05:30", "reference_id": "REF1007"},
+    {"ledger_entry_id": "LG-0008", "amount": 980.00, "timestamp": "2026-10-30T16:13:05+05:30", "reference_id": "REF1008"},
+    {"ledger_entry_id": "LG-0009", "amount": 4500.00, "timestamp": "2026-10-30T17:01:30+05:30", "reference_id": "REF1009"},
+    {"ledger_entry_id": "LG-0010", "amount": 150.25, "timestamp": "2026-10-30T18:46:10+05:30", "reference_id": "REF1010"},
+    {"ledger_entry_id": "LG-0011", "amount": 2000.00, "timestamp": "2026-10-30T10:01:00+05:30", "reference_id": "REF1011"},
+    {"ledger_entry_id": "LG-0012", "amount": 736.00, "timestamp": "2026-10-30T11:01:30+05:30", "reference_id": "REF1012"},
+    {"ledger_entry_id": "LG-0013", "amount": 3200.00, "timestamp": "2026-10-30T09:31:00+05:30", "reference_id": null},
+    {"ledger_entry_id": "LG-0014", "amount": 605.50, "timestamp": "2026-10-30T14:52:00+05:30", "reference_id": null},
+    {"ledger_entry_id": "LG-0015", "amount": 1200.00, "timestamp": "2026-10-31T09:00:00+05:30", "reference_id": "REF1015"},
+    {"ledger_entry_id": "LG-0016", "amount": 450.00, "timestamp": "2026-10-30T22:30:00+05:30", "reference_id": null},
+    {"ledger_entry_id": "LG-0018", "amount": 333.33, "timestamp": "2026-10-30T07:00:00+05:30", "reference_id": null}
+  ]
+}

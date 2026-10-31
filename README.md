@@ -209,6 +209,70 @@ instruments down, 41.7%, below the 60% stress threshold, correctly
 suppressed as noise), not a backfilled history — more entries land
 here only as the project actually gets run again, by hand for now.
 
+## Payments-domain generalization (`reconcile.py` / `reconciliation_judge.py`)
+
+Everything above is trading-domain, built on real IQRF_V2 data — but
+Razorpay's own business is payments, not trading. This pair of
+modules generalizes the exact pattern proved out in
+`escalation_judge.py` — deterministic work decides the bulk of it,
+a model only judges the genuinely ambiguous leftover — into a
+payments reconciliation agent, to show the pattern transfers rather
+than only working in the one domain it was first built for.
+"Automated reconciliation" is named directly, in those words, in a
+real, current Razorpay Central AI team posting (Product Manager II —
+AI), alongside agentic payments, fraud detection, and smart payouts.
+
+**What it does:**
+
+1. `reconcile.py` deterministically matches a gateway-settlement
+   feed against an internal ledger, by reference ID, amount, and a
+   clean-match timing window. No model involved — plain matching
+   logic, same "math decides" discipline as `risk_brief.py`.
+2. Everything that matches cleanly is done. What's left — a
+   reference ID that matches but an amount that doesn't, an amount
+   that matches but no reference ID to confirm it, a real settlement
+   delay — is the genuinely ambiguous set, and nothing else.
+3. `reconciliation_judge.py` looks at *only* that ambiguous set and
+   decides, per pair: `LIKELY_SAME_TRANSACTION`, `LIKELY_DIFFERENT`,
+   or `NEEDS_HUMAN_REVIEW`, with a stated rationale — never asked to
+   recompute an amount or invent a fact it wasn't given.
+4. Anything with no candidate at all on the other side is flagged
+   directly as a real, standalone discrepancy — never sent to a
+   model, since there's nothing to compare it against.
+
+**Honest scope difference, stated plainly:** unlike IQRF_V2's real
+trade history, there is no real payment-gateway settlement file or
+real internal ledger available to this project. `synthetic_data/reconciliation_demo.json`
+is exactly that — synthetic, hand-authored, its own `_provenance`
+block says so — 18 scenarios built to hold real reconciliation
+patterns (10 clean matches, 6 ambiguous pairs, 2 genuinely unmatched
+singles), not drawn from any real system. It is never presented as
+real transaction data, the same honesty line this project holds
+everywhere else.
+
+**Real finding, running the offline rule against the full demo set**
+(`python3 run_reconciliation.py synthetic_data/reconciliation_demo.json --offline`):
+of the 6 ambiguous pairs, 3 resolve to `LIKELY_SAME_TRANSACTION`
+(rounding-level amount gaps, or a missing reference ID with a close
+timestamp), 2 to `NEEDS_HUMAN_REVIEW` (a real amount gap behind a
+matching reference ID; a matching amount but too long a gap with no
+reference ID to confirm it), and 1 to `LIKELY_DIFFERENT` (no
+reference ID and a real amount gap). One result worth calling out
+specifically: a pair ~23 hours apart (`GW-0015`/`LG-0015`, a T+1
+settlement delay) still resolves to `LIKELY_SAME_TRANSACTION`,
+because the offline rule leans on the matching reference ID rather
+than the clock — a deliberately realistic case, since next-day
+settlement is normal in real payment systems and shouldn't be
+treated as suspicious just because time passed.
+
+**Verification status:** the offline rule (`judge_match_offline`) and
+the deterministic matcher are fully verified — 15 tests, including
+the T+1-settlement case and all three decision labels exercised
+directly. The live model call (`judge_match`) is implemented against
+the real `anthropic` SDK, same pattern as `escalation_judge.judge_escalation`,
+but **not independently run** in this sandbox for the same reason —
+no bare `ANTHROPIC_API_KEY` available.
+
 ## Why a separate project
 
 I was explicit with myself about this while building it: this
@@ -362,7 +426,11 @@ telegram_notifier.py       Telegram Bot API delivery, dry-run by default
 generate_daily_brief.py    CLI entrypoint for a single day
 live_usage_check.py        real usage-log entry generator (task B): real live Kite quotes -> real decision
 real_usage_log.md          the append-only real usage log live_usage_check.py writes to
+reconcile.py                payments-domain generalization: deterministic transaction matching
+reconciliation_judge.py     the model's one judgment call in the payments domain: same / different / needs review
+run_reconciliation.py       CLI: runs the reconciliation agent end to end
 sample_data/                two hand-built illustrative sample days
 real_data/                  the real 13-day RELIANCE history, extracted read-only from IQRF_V2's own reports
-tests/                     46 tests, all passing
+synthetic_data/              hand-authored, clearly-labeled synthetic reconciliation demo data
+tests/                     61 tests, all passing
 ```
