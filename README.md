@@ -11,6 +11,16 @@ It is **deliberately a separate, independent project from
 [`IQRF_V2`](../IQRF-)**, my real intraday trading system — see
 "Why a separate project" below.
 
+**Upgraded for a "Junior Generative AI Engineer" JD** (RAG, LLM
+frameworks, vector databases, FastAPI, agentic tool-calling) with a
+real RAG layer (LangChain + ChromaDB) over this project's own real
+data, an agentic tool that re-runs the real detectors live instead of
+retrieving a stale answer, and a FastAPI service wrapping all of it —
+see "GenAI upgrade" below. This is an addition, not a rewrite:
+everything above this point in the README describes the original
+Razorpay-targeted agent exactly as it was before the upgrade, and all
+of it still works unchanged.
+
 ## What it does
 
 Given a day's trades and current portfolio state, it:
@@ -135,6 +145,109 @@ this escalation layer hasn't had yet. The live model path
 data in this sandbox — see "What's actually verified" below — so
 whether it behaves less bluntly than the offline floor on these same
 13 days is still an open question, not a claim this README makes.
+
+## GenAI upgrade: RAG, vector search, and a served API (`rag/`, `api.py`)
+
+Everything above this section predates the upgrade and still runs
+exactly as described. This section adds the three things a "Junior
+Generative AI Engineer" JD asks for that the original agent didn't
+have: a RAG pipeline over real data, a vector database, and a served
+Python API — plus a step toward real agentic tool-calling, building
+on the judgment layer (`escalation_judge.py`) this project already
+had.
+
+**What it does:** given a natural-language question, it retrieves
+the most relevant real documents from a ChromaDB vector store and
+either answers from them directly (offline, extractive) or asks
+Claude to narrate an answer *from only those documents* (live, same
+"never invent a fact" discipline as `llm_narrative.py`) — or, for a
+question about the *current* live state ("is anything flagged right
+now?"), it skips retrieval entirely and actually re-runs the real
+pattern detectors and escalation rule, because a cached document
+would go stale the moment a new real day lands.
+
+```
+rag/corpus_builder.py   builds the real document corpus: every real day's
+                        walk-forward output (re-derived, not cached), the
+                        real usage log, labelled illustrative samples, and
+                        reference docs pulled from the detectors' own
+                        docstrings
+rag/embeddings.py       OfflineTfidfEmbeddings (scikit-learn TF-IDF,
+                        real, tested, no network) implementing LangChain's
+                        Embeddings interface; get_embeddings() is the one
+                        seam a real provider (OpenAI/HF) would plug into
+rag/vector_store.py     builds the ChromaDB collection from the corpus
+rag/tools.py            check_live_pattern_state -- a LangChain Tool that
+                        re-runs the real detectors live; route_offline is
+                        the deterministic keyword router (the tested floor
+                        a real tool-calling agent is meant to improve on)
+rag/rag_chain.py         ask() -- the single entry point: tool router, then
+                        RAG retrieval, live-model-with-offline-fallback
+api.py                  FastAPI service: /ask, /brief, /pattern-check, /health
+```
+
+**Honest substitution, stated plainly (same discipline as everywhere
+else in this project):** the vector embeddings are TF-IDF, not a
+pretrained neural embedding model. `huggingface.co` is blocked by
+this sandbox's egress allowlist (confirmed directly, same block
+[`veridex`](../veridex)'s README documents for its own FAISS layer),
+so no pretrained embedding model could be downloaded here, and no
+`OPENAI_API_KEY` is available either. TF-IDF is a real, still-used
+technique for this kind of matching — not an invented stand-in — and
+it's what the whole pipeline actually runs on and is tested against,
+not a placeholder swapped out before anything works. `get_embeddings()`
+is the real seam a production embedding provider plugs into with no
+other code changes.
+
+**Live-model path (`rag_chain.answer_question`, used by `/ask` when
+`offline` isn't forced):** implemented against the real
+`langchain-anthropic` `ChatAnthropic` client, same "narrate only
+what's given" system prompt discipline as `llm_narrative.py`. Unlike
+this project's existing raw `anthropic.Anthropic()` calls — which
+fail deterministically in this sandbox with "could not resolve
+authentication method" when no key is set, confirmed directly — a
+bare `ChatAnthropic()` call here was observed to succeed at least
+once against the real API in this same sandbox, for reasons this
+project can't fully explain (no `ANTHROPIC_API_KEY` is set, and a
+repeat of the identical call failed with a connection error
+immediately after). Treated honestly: this path is **not reliably
+verified** either way in this sandbox, same status as
+`generate_brief`'s and `judge_escalation`'s live paths. `ask()`
+degrades to the offline extractive path on any failure, so this
+never costs a dropped answer — export `ANTHROPIC_API_KEY` yourself to
+verify the live path for real.
+
+**Agentic tool-calling, honestly scoped:** `rag/tools.py` exposes one
+real tool (`check_live_pattern_state`) that a LangChain tool-calling
+agent would bind to and decide, itself, whether to call. That
+decision-by-a-model step is implemented (`build_tools()` returns a
+real `langchain_core.tools.Tool`) but, same as the live-model paths
+above, isn't independently run end-to-end in this sandbox. The
+deterministic keyword router (`route_offline`) is the tested,
+no-network floor this would improve on — not a hidden second agent.
+
+**What's actually verified:** `rag/corpus_builder.py` (all 13 real
+days + the real usage log + labelled samples + detector reference
+docs, asserted against known real findings like the `2026-06-04`
+`symbol_repeat_loser`/`overtrading_frequency` flags), the offline
+TF-IDF embedder (fit/embed/relative-similarity, including the
+"query before fit raises" guard), the ChromaDB-backed offline
+retrieval path end to end, the tool router's live re-run of the real
+detectors, and every FastAPI endpoint (`/health`, `/ask` offline and
+tool-routed, `/brief` for a known and an unknown date, `/pattern-check`)
+through `TestClient` against the real startup lifespan. 26 new tests
+(87 total across the project), all passing, flake8-clean.
+
+Run the API:
+
+```bash
+pip install -r requirements.txt
+uvicorn api:app --reload
+curl -X POST localhost:8000/ask \
+    -H 'content-type: application/json' \
+    -d '{"question": "what happened on 2026-06-04?", "offline": true}'
+curl -X POST localhost:8000/pattern-check -H 'content-type: application/json' -d '{}'
+```
 
 ## Real multi-day history, and real usage
 
@@ -436,8 +549,11 @@ real_usage_log.md          the append-only real usage log live_usage_check.py wr
 reconcile.py                payments-domain generalization: deterministic transaction matching
 reconciliation_judge.py     the model's one judgment call in the payments domain: same / different / needs review
 run_reconciliation.py       CLI: runs the reconciliation agent end to end
+rag/                       GenAI-JD upgrade: RAG corpus/embeddings/vector store, agentic tools, query chain
+api.py                     FastAPI service wrapping the CLI tools and the RAG layer
 sample_data/                two hand-built illustrative sample days
 real_data/                  the real 13-day RELIANCE history, extracted read-only from IQRF_V2's own reports
 synthetic_data/              hand-authored, clearly-labeled synthetic reconciliation demo data
-tests/                     61 tests, all passing
+tests/                     87 tests, all passing
+.github/workflows/ci.yml   lint (flake8) + full test suite on every push
 ```
