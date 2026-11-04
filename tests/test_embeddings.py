@@ -25,6 +25,18 @@ def test_embed_query_before_fit_raises():
         emb.embed_query("anything")
 
 
+def test_embed_documents_called_twice_raises_instead_of_reusing_stale_vocab():
+    """Regression test for a round-table review finding: a second
+    embed_documents call on an already-fitted instance used to call
+    .transform() with the OLD vocabulary, silently dropping any new
+    term from a changed corpus with no error. It must now raise
+    rather than guess."""
+    emb = OfflineTfidfEmbeddings()
+    emb.embed_documents(["drawdown breach today", "overtrading flagged"])
+    with pytest.raises(RuntimeError):
+        emb.embed_documents(["a completely different second batch of documents"])
+
+
 def test_embed_query_after_fit_uses_same_vocabulary_dimension():
     emb = OfflineTfidfEmbeddings()
     doc_vectors = emb.embed_documents(["drawdown breach today", "overtrading flagged"])

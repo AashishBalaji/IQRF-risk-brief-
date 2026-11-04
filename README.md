@@ -226,6 +226,21 @@ above, isn't independently run end-to-end in this sandbox. The
 deterministic keyword router (`route_offline`) is the tested,
 no-network floor this would improve on — not a hidden second agent.
 
+**Real bug found and fixed (round-table review):** the first version
+of `check_live_pattern_state` approximated the escalation judge's
+recurrence input as `{flag_name: 1}` for every flag — below
+`judge_escalation_offline`'s own `>=3` recurrence threshold, so
+recurrence could never be detected at all. On 2026-06-17, the real
+rolling fire-history (the same one `multi_day_runner.py` builds)
+shows `symbol_repeat_loser` recurring 5 of the last 5 days and
+correctly decides `NOTIFY_NOW`; the broken approximation silently
+reported `HOLD_FOR_DIGEST` for the same day and flags instead — a
+real wrong answer from the one tool meant to represent current state,
+not just a cruder floor. Fixed by replaying the same rolling
+fire-history window `multi_day_runner.py` uses, inside the tool
+itself, rather than approximating it; see `tests/test_tools.py`'s
+regression test pinning the real `NOTIFY_NOW` decision.
+
 **What's actually verified:** `rag/corpus_builder.py` (all 13 real
 days + the real usage log + labelled samples + detector reference
 docs, asserted against known real findings like the `2026-06-04`

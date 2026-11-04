@@ -12,6 +12,21 @@ def test_check_live_pattern_state_runs_real_detectors_over_real_history():
     assert "Escalation:" in result
 
 
+def test_check_live_pattern_state_matches_multi_day_runners_real_escalation():
+    """Regression test for a round-table review finding: an earlier
+    version hardcoded recent_fire_counts to 1 for every flag, which is
+    below judge_escalation_offline's own recurrence threshold (>=3) and
+    so could never detect recurrence -- it silently reported
+    HOLD_FOR_DIGEST on 2026-06-17, a day the real rolling fire-history
+    (same one multi_day_runner.py builds) says NOTIFY_NOW. This pins
+    the real decision and the real recurrence evidence it must be
+    based on, not just that the string "Escalation:" appears."""
+    result = check_live_pattern_state()
+    assert "NOTIFY_NOW" in result
+    assert "symbol_repeat_loser" in result
+    assert "recurring 5 of the last 5 days" in result
+
+
 def test_build_tools_returns_one_named_tool():
     tools = build_tools()
     assert len(tools) == 1

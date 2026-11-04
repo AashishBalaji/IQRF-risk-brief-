@@ -33,12 +33,27 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class OfflineTfidfEmbeddings(Embeddings):
     """Deterministic, no-network embedding function. Fits its TF-IDF
-    vocabulary from the first batch of documents it is asked to embed
-    (the full corpus, built once at vector-store construction time --
-    see vector_store.py), then reuses that fitted vocabulary for every
-    later query. A query embedded before any documents have been
-    fitted is a programming error, not a data problem, so it raises
-    rather than silently returning a zero vector."""
+    vocabulary from the first (and only ever the first) batch of
+    documents it is asked to embed (the full corpus, built once at
+    vector-store construction time -- see vector_store.py), then
+    reuses that fitted vocabulary for every later query. A query
+    embedded before any documents have been fitted is a programming
+    error, not a data problem, so it raises rather than silently
+    returning a zero vector.
+
+    One instance is good for exactly one corpus. A round-table review
+    found that a *second* call to embed_documents (e.g. from a future
+    incremental vector_store.add_texts() caller reusing an already-
+    fitted instance) would silently call .transform() with the old
+    vocabulary instead of refitting -- any term only present in the
+    new batch would vanish with no error, degrading retrieval quality
+    with nothing in the logs to explain why. Since this class has no
+    legitimate incremental-fit use case (the whole point of fitting
+    once over the full corpus is that TF-IDF's own weighting depends
+    on the full document frequency distribution), embed_documents now
+    raises on a second call instead of guessing: build a fresh
+    OfflineTfidfEmbeddings() per corpus build, same as
+    vector_store.build_vector_store already does."""
 
     def __init__(self, max_features: int = 4096) -> None:
         self._vectorizer = TfidfVectorizer(max_features=max_features, stop_words="english")
@@ -47,11 +62,17 @@ class OfflineTfidfEmbeddings(Embeddings):
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         if not texts:
             return []
-        if not self._fitted:
-            matrix = self._vectorizer.fit_transform(texts)
-            self._fitted = True
-        else:
-            matrix = self._vectorizer.transform(texts)
+        if self._fitted:
+            raise RuntimeError(
+                "OfflineTfidfEmbeddings.embed_documents called a second time on "
+                "an already-fitted instance -- this would silently reuse a stale "
+                "TF-IDF vocabulary and drop any new term with no error. Build a "
+                "fresh OfflineTfidfEmbeddings() (or call "
+                "vector_store.build_vector_store() again) for a new/changed "
+                "document set instead of reusing this one."
+            )
+        matrix = self._vectorizer.fit_transform(texts)
+        self._fitted = True
         return matrix.toarray().tolist()
 
     def embed_query(self, text: str) -> List[float]:

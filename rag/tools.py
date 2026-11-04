@@ -17,6 +17,7 @@ agent is meant to improve on, not a hidden second decision-maker.
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -32,26 +33,53 @@ _LIVE_STATE_KEYWORDS = (
     "currently", "today", "live",
 )
 
+# Same window multi_day_runner.py uses for its rolling fire-history --
+# kept as the same named constant here rather than a bare literal so a
+# change to one is a visible decision to make in the other too.
+ESCALATION_WINDOW_DAYS = 5
+
 
 def check_live_pattern_state(_input: str = "") -> str:
     """Runs the real pattern-detector suite and the real offline
     escalation rule over the FULL real 13-day RELIANCE history (the
     same detectors and the same data multi_day_runner.py runs), and
     reports the final real day's state -- not a cached answer, a live
-    recomputation every time this tool is called."""
+    recomputation every time this tool is called.
+
+    The escalation decision replays the SAME rolling fire-history
+    multi_day_runner.py builds (a deque of the last ESCALATION_WINDOW_DAYS
+    days' fired-flag-name sets), not a single-day approximation -- a
+    round-table review found an earlier version of this function
+    hardcoded recent_fire_counts to 1 for every flag, which is below
+    judge_escalation_offline's own >=3 recurrence threshold and so
+    could never detect recurrence at all: it silently reported
+    HOLD_FOR_DIGEST on days the real multi-day history says NOTIFY_NOW
+    (confirmed on 2026-06-16, where symbol_repeat_loser actually
+    recurs 5/5 days). See BUGS-style note in README.md's "GenAI
+    upgrade" section."""
     real_days = load_real_history()
     cross_fraction_by_day = cross_instrument_loss_fraction_by_day(real_days)
-    daily_trades_seen = [day.trades for day in real_days]
+
+    daily_trades_seen: List[list] = []
+    fire_history: deque = deque()
+    flags = []
+    for day in real_days:
+        daily_trades_seen.append(day.trades)
+        flags = run_pattern_detectors(
+            daily_trades_seen,
+            cross_instrument_loss_fraction_by_day=cross_fraction_by_day,
+            latest_date=day.date,
+        )
+        fire_history.append({f.name for f in flags})
+        while len(fire_history) > ESCALATION_WINDOW_DAYS:
+            fire_history.popleft()
 
     latest = real_days[-1]
     summary = compute_risk_summary(latest.portfolio, latest.trades)
-    flags = run_pattern_detectors(
-        daily_trades_seen,
-        cross_instrument_loss_fraction_by_day=cross_fraction_by_day,
-        latest_date=latest.date,
-    )
-    recent_fire_counts = {f.name: 1 for f in flags}  # single-call view, no multi-day fire history
-    escalation = judge_escalation_offline(flags, recent_fire_counts, recent_window_days=1)
+    recent_fire_counts = {
+        f.name: sum(1 for day_names in fire_history if f.name in day_names) for f in flags
+    }
+    escalation = judge_escalation_offline(flags, recent_fire_counts, ESCALATION_WINDOW_DAYS)
 
     if not flags:
         flag_text = "No pattern flags fired."

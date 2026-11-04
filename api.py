@@ -22,7 +22,7 @@ from contextlib import asynccontextmanager
 from typing import List
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from llm_narrative import generate_brief_offline
 from rag.rag_chain import ask as rag_ask
@@ -46,9 +46,13 @@ app = FastAPI(title="iqrf-risk-brief API", lifespan=lifespan)
 
 
 class AskRequest(BaseModel):
-    question: str
+    # max_length is a cheap, real safeguard even for a local demo --
+    # a round-table review pointed out an unbounded string here could
+    # be pushed straight into the TF-IDF vectorizer or an LLM call
+    # with no limit. 2000 chars is generous for a question.
+    question: str = Field(max_length=2000)
     offline: bool = False
-    k: int = 4
+    k: int = Field(default=4, ge=1, le=20)
 
 
 class AskResponse(BaseModel):

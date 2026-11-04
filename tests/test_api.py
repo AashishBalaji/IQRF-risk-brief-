@@ -41,6 +41,22 @@ def test_ask_rejects_empty_question(client):
     assert response.status_code == 400
 
 
+def test_ask_rejects_oversized_question_at_the_pydantic_layer(client):
+    """Regression test for a round-table review finding: question had
+    no max_length, so an arbitrarily large string could be pushed
+    straight into the TF-IDF vectorizer / LLM call. FastAPI/Pydantic
+    should reject it before it ever reaches rag_chain.ask()."""
+    response = client.post("/ask", json={"question": "x" * 2001})
+    assert response.status_code == 422
+
+
+def test_ask_rejects_k_outside_allowed_range(client):
+    response = client.post("/ask", json={"question": "anything", "k": 0, "offline": True})
+    assert response.status_code == 422
+    response = client.post("/ask", json={"question": "anything", "k": 21, "offline": True})
+    assert response.status_code == 422
+
+
 def test_ask_routes_live_state_question_to_the_tool(client):
     response = client.post("/ask", json={"question": "Is anything flagged right now?"})
     assert response.status_code == 200
