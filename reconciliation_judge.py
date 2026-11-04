@@ -25,7 +25,10 @@ import anthropic
 
 from reconcile import ROUNDING_TOLERANCE, AmbiguousPair, _hours_between
 
-_MODEL = "claude-sonnet-4-5-20250929"
+# See llm_narrative.py's _MODEL comment -- same deprecation fix,
+# applied here for consistency across every module that makes a live
+# Claude call.
+_MODEL = "claude-sonnet-5"
 
 LIKELY_SAME_TRANSACTION = "LIKELY_SAME_TRANSACTION"
 LIKELY_DIFFERENT = "LIKELY_DIFFERENT"

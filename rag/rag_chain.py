@@ -70,8 +70,15 @@ def answer_question(
         return RagAnswer(answer="No relevant real records found for that question.", sources=[])
 
     context = "\n\n".join(d.page_content for d in docs)
+    # The previous pin (claude-sonnet-4-5-20250929, and the bare
+    # claude-sonnet-4-5 alias it resolves to) emits a deprecation
+    # warning as of this round of work (EOL 2026-11-30) -- confirmed
+    # live against the real API, not assumed. claude-sonnet-5 is the
+    # current model as of 2026-11; verified it reaches the real API
+    # with no deprecation warning (a dummy-key call returns a clean
+    # 401, not a warning) before pinning it here.
     llm = ChatAnthropic(
-        model="claude-sonnet-4-5-20250929", api_key=api_key, max_tokens=400, timeout=30
+        model="claude-sonnet-5", api_key=api_key, max_tokens=400, timeout=30
     )
     # Every document in today's corpus is author-controlled (derived
     # from this project's own deterministic runs and docstrings -- see

@@ -180,14 +180,63 @@ def _detector_reference_documents() -> List[RagDocument]:
     return docs
 
 
+# README.md is this project's own real, long-form documentation --
+# 500+ lines mixing prose and code blocks, nothing fabricated for
+# this purpose. 800 chars / 120 overlap was chosen, not defaulted,
+# for two concrete reasons specific to this document: (a) README's
+# sections run from a couple of sentences to several paragraphs, so
+# 800 chars keeps most sections in one chunk while still splitting
+# the handful of long ones instead of returning all-or-nothing; (b)
+# the overlap is sized to usually keep a short code block's own
+# surrounding sentence attached to it even when a chunk boundary
+# lands close by, which a 0-overlap split would frequently sever.
+# Splitting on markdown headers first, then paragraphs, then
+# sentences (the separator list below, in that order) means a chunk
+# only breaks mid-paragraph as a last resort.
+_README_CHUNK_SIZE = 800
+_README_CHUNK_OVERLAP = 120
+
+
+def _readme_documents() -> List[RagDocument]:
+    """Splits this project's own real README.md into retrievable
+    chunks via a real chunk-size/overlap strategy (RecursiveCharacter
+    TextSplitter), rather than one giant document or one document per
+    arbitrary line count. This is the corpus's only long real
+    document, which is exactly why it is the one that needed a real
+    chunking decision -- the daily-history and usage-log documents
+    above are already short enough that splitting them would only
+    fragment an already-atomic fact."""
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+    path = REPO_ROOT / "README.md"
+    if not path.exists():
+        return []
+    text = path.read_text()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=_README_CHUNK_SIZE,
+        chunk_overlap=_README_CHUNK_OVERLAP,
+        separators=["\n## ", "\n### ", "\n\n", "\n", ". ", " ", ""],
+    )
+    chunks = splitter.split_text(text)
+    return [
+        RagDocument(
+            text=chunk,
+            metadata={"source": "README.md", "kind": "readme_chunk", "chunk_index": str(i)},
+        )
+        for i, chunk in enumerate(chunks)
+    ]
+
+
 def build_corpus() -> List[RagDocument]:
     """Assembles the full corpus: real multi-day history (walk-forward,
     re-derived, never fabricated), the real usage log, labelled
-    illustrative samples, and reference documentation. Called once at
-    vector-store build time."""
+    illustrative samples, reference documentation, and chunked README
+    content. Called once at vector-store build time."""
     docs: List[RagDocument] = []
     docs.extend(_daily_history_documents())
     docs.extend(_real_usage_log_documents())
     docs.extend(_sample_data_documents())
     docs.extend(_detector_reference_documents())
+    docs.extend(_readme_documents())
     return docs

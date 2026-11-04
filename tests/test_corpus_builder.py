@@ -5,8 +5,11 @@ non-empty for each source."""
 from __future__ import annotations
 
 from rag.corpus_builder import (
+    _README_CHUNK_OVERLAP,
+    _README_CHUNK_SIZE,
     _daily_history_documents,
     _detector_reference_documents,
+    _readme_documents,
     _real_usage_log_documents,
     _sample_data_documents,
     build_corpus,
@@ -59,3 +62,41 @@ def test_build_corpus_combines_all_sources_with_no_empty_documents():
     kinds = {d.metadata.get("kind") for d in docs}
     assert "daily_summary" in kinds
     assert "reference" in kinds
+    assert "readme_chunk" in kinds
+
+
+def test_readme_documents_split_into_more_than_one_chunk():
+    """README.md is ~570 real lines -- a real chunking strategy must
+    actually split it into multiple retrievable pieces, not return it
+    as one giant document (which would defeat the point of chunking:
+    a retrieval would always pull back the whole file)."""
+    docs = _readme_documents()
+    assert len(docs) > 10
+    assert all(d.metadata["source"] == "README.md" for d in docs)
+    assert all(d.metadata["kind"] == "readme_chunk" for d in docs)
+
+
+def test_readme_chunks_respect_the_stated_chunk_size_budget():
+    """Every chunk should be at or under the configured chunk_size
+    (RecursiveCharacterTextSplitter can occasionally emit something
+    slightly larger when no separator fits -- an unbounded overshoot
+    would mean the splitter silently stopped doing its job)."""
+    docs = _readme_documents()
+    oversized = [d for d in docs if len(d.text) > _README_CHUNK_SIZE + 200]
+    assert not oversized, f"{len(oversized)} chunk(s) wildly exceed the chunk-size budget"
+
+
+def test_readme_chunks_are_indexed_in_order():
+    docs = _readme_documents()
+    indices = [int(d.metadata["chunk_index"]) for d in docs]
+    assert indices == sorted(indices)
+    assert indices[0] == 0
+
+
+def test_readme_chunk_overlap_is_a_real_positive_value():
+    # Not a deep assertion about the splitter's internals -- just a
+    # guard against someone later "simplifying" this back to 0, which
+    # would silently remove the overlap this module's docstring
+    # argues for.
+    assert _README_CHUNK_OVERLAP > 0
+    assert _README_CHUNK_OVERLAP < _README_CHUNK_SIZE

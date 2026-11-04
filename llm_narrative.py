@@ -18,7 +18,11 @@ import anthropic
 
 from risk_brief import RiskSummary
 
-_MODEL = "claude-sonnet-4-5-20250929"
+# The previous pin (claude-sonnet-4-5-20250929) emits a deprecation
+# warning (EOL 2026-11-30) -- confirmed live against the real API.
+# claude-sonnet-5 is current as of 2026-11 and verified clean (see
+# rag/rag_chain.py's _MODEL comment for how that was checked).
+_MODEL = "claude-sonnet-5"
 
 _SYSTEM_PROMPT = (
     "You write a short daily risk brief for an intraday equity trader, "

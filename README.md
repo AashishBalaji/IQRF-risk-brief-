@@ -169,62 +169,147 @@ would go stale the moment a new real day lands.
 ```
 rag/corpus_builder.py   builds the real document corpus: every real day's
                         walk-forward output (re-derived, not cached), the
-                        real usage log, labelled illustrative samples, and
+                        real usage log, labelled illustrative samples,
                         reference docs pulled from the detectors' own
-                        docstrings
-rag/embeddings.py       OfflineTfidfEmbeddings (scikit-learn TF-IDF,
-                        real, tested, no network) implementing LangChain's
-                        Embeddings interface; get_embeddings() is the one
-                        seam a real provider (OpenAI/HF) would plug into
+                        docstrings, and README.md split into real,
+                        overlapping chunks (see "Real chunking" below)
+rag/embeddings.py       LocalSentenceTransformerEmbeddings (a real,
+                        pretrained local semantic-embedding model) is the
+                        default; OfflineTfidfEmbeddings (scikit-learn
+                        TF-IDF, no network at all) is the tested fallback
+                        if the model can't load. Both implement
+                        LangChain's Embeddings interface; get_embeddings()
+                        is the one seam a hosted provider (OpenAI) plugs
+                        into instead
 rag/vector_store.py     builds the ChromaDB collection from the corpus
+rag/query_log.py        a real SQLite table logging every /ask call (see
+                        "Real SQL" below) -- not a cache, a query-history
+                        log read back with real SQL
 rag/tools.py            check_live_pattern_state -- a LangChain Tool that
                         re-runs the real detectors live; route_offline is
                         the deterministic keyword router (the tested floor
                         a real tool-calling agent is meant to improve on)
+rag/agent.py            run_tool_calling_agent() -- the real two-turn
+                        tool-calling loop: binds rag/tools.py's real Tool
+                        to a model via bind_tools(), lets the model decide
+                        whether to call it, and feeds the real tool output
+                        back for a final answer (see "Real agentic
+                        tool-calling" below)
+rag/eval.py             a real evaluation harness: retrieval precision@k
+                        against the real corpus, and a groundedness score
+                        checking an answer's stated numbers against its
+                        real sources (see "Real evaluation" below)
 rag/rag_chain.py         ask() -- the single entry point: tool router, then
                         RAG retrieval, live-model-with-offline-fallback
-api.py                  FastAPI service: /ask, /brief, /pattern-check, /health
+api.py                  FastAPI service: /ask, /brief, /pattern-check,
+                        /query-history, /eval/retrieval, /health
 ```
 
-**Honest substitution, stated plainly (same discipline as everywhere
-else in this project):** the vector embeddings are TF-IDF, not a
-pretrained neural embedding model. `huggingface.co` is blocked by
-this sandbox's egress allowlist (confirmed directly, same block
-[`veridex`](../veridex)'s README documents for its own FAISS layer),
-so no pretrained embedding model could be downloaded here, and no
-`OPENAI_API_KEY` is available either. TF-IDF is a real, still-used
-technique for this kind of matching — not an invented stand-in — and
-it's what the whole pipeline actually runs on and is tested against,
-not a placeholder swapped out before anything works. `get_embeddings()`
-is the real seam a production embedding provider plugs into with no
-other code changes.
+**Real semantic embeddings (updated 2026-11-04):** the vector
+embeddings now come from a real, pretrained local model
+(`sentence-transformers/all-MiniLM-L6-v2`, 384 dims) via
+`LocalSentenceTransformerEmbeddings` — no API key, no per-call
+network, only a one-time weights download. An earlier version of
+this README said `huggingface.co` was blocked by this sandbox's
+egress allowlist (same block `veridex`'s README documents for its
+own FAISS layer); re-tested directly, the download now succeeds.
+`tests/test_embeddings.py::test_semantic_retrieval_finds_a_synonymous_match_tfidf_cannot`
+is the actual proof this is real semantic matching and not a relabel:
+it shows TF-IDF scoring a synonym-only paraphrase at `0.0` similarity
+against the document it should match, and the local model scoring
+the same pair above `0.5` — a gap TF-IDF cannot close by construction
+(it only ever matches shared vocabulary). `OfflineTfidfEmbeddings` is
+kept as the tested, no-network fallback `get_embeddings()` reaches
+for if the local model ever fails to load — logged when that happens,
+never silent — not a placeholder, a real exercised path.
+
+**Real chunking (`corpus_builder._readme_documents`):** README.md
+(500+ real lines, nothing fabricated for this purpose) is the
+corpus's only document long enough to need splitting, so it's the
+one that gets a real chunk-size/overlap decision instead of an
+invented one: `RecursiveCharacterTextSplitter`, 800-char chunks with
+120-char overlap, splitting on markdown headers first, then
+paragraphs, then sentences, only falling back to a mid-sentence
+break as a last resort. 800/120 were chosen for this specific
+document (most README sections are shorter than 800 chars and so
+survive as one chunk; the overlap is sized to usually keep a short
+code example attached to the sentence introducing it), not left at a
+library default — see `corpus_builder.py`'s comment for the full
+reasoning.
+
+**Real SQL (`rag/query_log.py`, `GET /query-history`):** every
+`/ask` call is logged to a real SQLite table (one `INSERT` per
+call) and read back with real SQL — a `GROUP BY` for the
+live/offline/tool mode split, an `ORDER BY ... LIMIT` for the most
+recent queries — not just written and never queried again. This is
+deliberately a plain relational log, not a second vector store or a
+cache: "basic SQL and database concepts" is a JD line nothing else
+in this project touched.
 
 **Live-model path (`rag_chain.answer_question`, used by `/ask` when
 `offline` isn't forced):** implemented against the real
 `langchain-anthropic` `ChatAnthropic` client, same "narrate only
-what's given" system prompt discipline as `llm_narrative.py`. Unlike
-this project's existing raw `anthropic.Anthropic()` calls — which
-fail deterministically in this sandbox with "could not resolve
-authentication method" when no key is set, confirmed directly — a
-bare `ChatAnthropic()` call here was observed to succeed at least
-once against the real API in this same sandbox, for reasons this
-project can't fully explain (no `ANTHROPIC_API_KEY` is set, and a
-repeat of the identical call failed with a connection error
-immediately after). Treated honestly: this path is **not reliably
-verified** either way in this sandbox, same status as
-`generate_brief`'s and `judge_escalation`'s live paths. `ask()`
-degrades to the offline extractive path on any failure, so this
-never costs a dropped answer — export `ANTHROPIC_API_KEY` yourself to
-verify the live path for real.
+what's given" system prompt discipline as `llm_narrative.py`, now
+pinned to `claude-sonnet-5` (the previous `claude-sonnet-4-5-*` pin
+started emitting a deprecation warning, EOL 2026-11-30, confirmed
+live against the real API). Narrowed what "not verified" actually
+means here, rather than leaving it vague: a direct call to the real
+`api.anthropic.com` with a dummy key returns a clean `401
+authentication_error` for `claude-sonnet-5` — proof the model id and
+endpoint are both valid, not a wrong-model or connectivity failure —
+but no bare `ANTHROPIC_API_KEY` is available in this sandbox, so a
+real authenticated call still can't be independently run here. Same
+honest status as `generate_brief`'s and `judge_escalation`'s live
+paths; `ask()` degrades to the offline extractive path on any
+failure, so this never costs a dropped answer — export
+`ANTHROPIC_API_KEY` yourself to verify the live path for real.
 
-**Agentic tool-calling, honestly scoped:** `rag/tools.py` exposes one
-real tool (`check_live_pattern_state`) that a LangChain tool-calling
-agent would bind to and decide, itself, whether to call. That
-decision-by-a-model step is implemented (`build_tools()` returns a
-real `langchain_core.tools.Tool`) but, same as the live-model paths
-above, isn't independently run end-to-end in this sandbox. The
-deterministic keyword router (`route_offline`) is the tested,
-no-network floor this would improve on — not a hidden second agent.
+**Real agentic tool-calling (`rag/agent.py`, updated 2026-11-04):**
+`run_tool_calling_agent()` is a real two-turn loop, not just a bound
+tool sitting unused — it binds `rag/tools.py`'s real
+`check_live_pattern_state` Tool to a model via `bind_tools()`, sends
+the question, and if the model's response carries a `tool_call` (the
+model *deciding* to call it, not a keyword match), the real tool
+actually runs and its real output is fed back as a `ToolMessage` for
+a final answer. An actual end-to-end attempt against the real API
+was made (`ChatAnthropic(model="claude-sonnet-5").invoke(...)`
+through this exact loop) and failed with a connection error — the
+same "no bare `ANTHROPIC_API_KEY` available" constraint as every
+other live path in this project, confirmed directly, not assumed.
+What's independently verified instead:
+`tests/test_agent.py::test_agent_calls_the_real_tool_when_the_model_requests_it_and_feeds_back_the_real_result`
+drives this exact function with a scripted model double that returns
+a real Anthropic-shaped `tool_call` message, and asserts the loop
+dispatches to the real tool, the real tool's real output
+(`"Live check as of ..."`, not a stub) is what gets fed back, and the
+final answer is returned correctly — proving this project's own loop
+logic is correct, which is the one part of this a sandbox without a
+model to actually call still can test honestly. The deterministic
+keyword router (`route_offline`) remains the tested, no-network floor
+this agent is meant to improve on in production, not a hidden second
+decision-maker.
+
+**Real evaluation (`rag/eval.py`, `GET /eval/retrieval`):** two
+automated metrics address the JD's "LLM response evaluation, and
+model optimization" line, which nothing else in this project
+measured. (1) Retrieval precision@k: five representative real
+questions against the real corpus, each with a documented
+real-answer check — run fresh against the live vector store at
+`/eval/retrieval`, not hardcoded. Honest result as of 2026-11-04:
+**0.8** (4/5) at k=4. The one miss is reported, not hidden: the 13
+daily-summary documents are near-identically templated, so a
+semantic embedder (unlike TF-IDF's literal token match) can't
+reliably surface one specific date in the top k — a real, documented
+tradeoff of the embeddings upgrade above, not a bug in the harness.
+(2) Groundedness: checks what fraction of the numbers an answer
+states actually appear in the real documents it was retrieved from —
+this project's long-standing "never invent a number" rule
+(`llm_narrative.py`, `escalation_judge.py`, `rag_chain.answer_question`'s
+system prompt) turned into a metric instead of only ever read by
+eye. It needs no live model to compute (no model-graded-by-model
+step — no live model is reachable in this sandbox to do that
+grading), and `tests/test_eval.py` proves it actually catches an
+invented number rather than just restating the rule in a docstring.
 
 **Real bug found and fixed (round-table review):** the first version
 of `check_live_pattern_state` approximated the escalation judge's
@@ -243,15 +328,23 @@ regression test pinning the real `NOTIFY_NOW` decision.
 
 **What's actually verified:** `rag/corpus_builder.py` (all 13 real
 days + the real usage log + labelled samples + detector reference
-docs, asserted against known real findings like the `2026-06-04`
-`symbol_repeat_loser`/`overtrading_frequency` flags), the offline
-TF-IDF embedder (fit/embed/relative-similarity, including the
-"query before fit raises" guard), the ChromaDB-backed offline
-retrieval path end to end, the tool router's live re-run of the real
-detectors, and every FastAPI endpoint (`/health`, `/ask` offline and
-tool-routed, `/brief` for a known and an unknown date, `/pattern-check`)
-through `TestClient` against the real startup lifespan. 26 new tests
-(87 total across the project), all passing, flake8-clean.
+docs + the README chunking, asserted against known real findings
+like the `2026-06-04` `symbol_repeat_loser`/`overtrading_frequency`
+flags), both embedders (the real local semantic model's output shape
+and its synonym-retrieval advantage over TF-IDF; TF-IDF's own
+fit/embed/relative-similarity and "query before fit raises" guard as
+the tested fallback), the ChromaDB-backed offline retrieval path end
+to end, the tool router's live re-run of the real detectors, the real
+agentic tool-calling loop's dispatch-and-feedback logic (via a
+scripted model double), the retrieval precision@k and groundedness
+eval metrics (against the real corpus and real hand-checked
+examples), the real SQLite query log (insert, the `GROUP BY`
+mode-count aggregate, the `ORDER BY ... LIMIT` recency query), and
+every FastAPI endpoint (`/health`, `/ask` offline and tool-routed
+plus its SQLite logging, `/brief` for a known and an unknown date,
+`/pattern-check`, `/query-history`, `/eval/retrieval`) through
+`TestClient` against the real startup lifespan. 116 tests total
+across the project, all passing, flake8-clean.
 
 Run the API:
 
@@ -262,6 +355,8 @@ curl -X POST localhost:8000/ask \
     -H 'content-type: application/json' \
     -d '{"question": "what happened on 2026-06-04?", "offline": true}'
 curl -X POST localhost:8000/pattern-check -H 'content-type: application/json' -d '{}'
+curl localhost:8000/query-history
+curl localhost:8000/eval/retrieval
 ```
 
 ## Real multi-day history, and real usage
@@ -469,9 +564,10 @@ honestly what wasn't checked:
   actually demonstrated in this README's example output.
 - **Live Claude API call (`generate_brief`)** — implemented against
   the real `anthropic` SDK (`client.messages.create(...)`,
-  `claude-sonnet-4-5-20250929`), but **not independently run** in
-  the sandbox this was built in, which has no bare
-  `ANTHROPIC_API_KEY` available to it. `generate_daily_brief.py`
+  `claude-sonnet-5` — updated from `claude-sonnet-4-5-20250929` after
+  that pin started emitting a deprecation warning, EOL 2026-11-30),
+  but **not independently run** in the sandbox this was built in,
+  which has no bare `ANTHROPIC_API_KEY` available to it. `generate_daily_brief.py`
   calls it by default and falls back to the offline narrator on any
   failure (tested: a missing-key run genuinely triggers this
   fallback, printing the real authentication error to stderr
@@ -564,11 +660,12 @@ real_usage_log.md          the append-only real usage log live_usage_check.py wr
 reconcile.py                payments-domain generalization: deterministic transaction matching
 reconciliation_judge.py     the model's one judgment call in the payments domain: same / different / needs review
 run_reconciliation.py       CLI: runs the reconciliation agent end to end
-rag/                       GenAI-JD upgrade: RAG corpus/embeddings/vector store, agentic tools, query chain
+rag/                       GenAI-JD upgrade: RAG corpus/embeddings/vector store/SQL
+                           query log, real agentic tool-calling loop, eval harness
 api.py                     FastAPI service wrapping the CLI tools and the RAG layer
 sample_data/                two hand-built illustrative sample days
 real_data/                  the real 13-day RELIANCE history, extracted read-only from IQRF_V2's own reports
 synthetic_data/              hand-authored, clearly-labeled synthetic reconciliation demo data
-tests/                     87 tests, all passing
+tests/                     116 tests, all passing
 .github/workflows/ci.yml   lint (flake8) + full test suite on every push
 ```

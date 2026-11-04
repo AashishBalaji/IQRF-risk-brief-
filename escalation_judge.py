@@ -36,7 +36,8 @@ import anthropic
 from pattern_detector import PatternFlag
 from risk_brief import RiskSummary
 
-_MODEL = "claude-sonnet-4-5-20250929"
+# See llm_narrative.py's _MODEL comment -- same deprecation fix.
+_MODEL = "claude-sonnet-5"
 
 NOTIFY_NOW = "NOTIFY_NOW"
 HOLD_FOR_DIGEST = "HOLD_FOR_DIGEST"

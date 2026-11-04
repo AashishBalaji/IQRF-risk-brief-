@@ -2,33 +2,50 @@
 embeddings.py -- the embedding layer for the RAG vector store.
 
 Same "real implementation + tested offline floor" discipline as
-llm_narrative.py and escalation_judge.py: a real embedding provider
-(OpenAI's or a local HuggingFace sentence-transformer) is what a
-production deployment would use, but neither can be verified live in
-this sandbox -- OPENAI_API_KEY isn't available here, and
-huggingface.co is blocked by this sandbox's egress allowlist (a
-pretrained-model download gets a 403 at the proxy, confirmed the same
-way veridex's README documents it for its own FAISS layer -- not a
-guess, the same sandbox, the same block).
+llm_narrative.py and escalation_judge.py, updated after a round-table
+review flagged that the original default (OfflineTfidfEmbeddings, a
+TF-IDF vectorizer) does not actually satisfy a JD line asking for
+real semantic embeddings: TF-IDF matches on shared vocabulary, not
+meaning, so a query using a synonym for a document's words retrieves
+nothing even when the document is exactly the right answer.
 
-OfflineTfidfEmbeddings is therefore the real, tested default: a
-deterministic TF-IDF vectorizer (scikit-learn) that implements
-LangChain's Embeddings interface exactly, no network and no API key
-required. It is not a stand-in that gets swapped out before anything
-works -- the whole RAG pipeline in this project runs on it, is tested
-against it, and degrades to nothing else. get_embeddings() below is
-the one seam a real embedding provider would plug into later with no
-other code changes, same role as llm_narrative.generate_brief's
-_MODEL constant.
+LocalSentenceTransformerEmbeddings below is the real fix: a small,
+pretrained neural embedding model (sentence-transformers/
+all-MiniLM-L6-v2, 384 dims) running fully locally once downloaded --
+no API key, no per-call network. An earlier version of this file
+said huggingface.co was blocked by this sandbox's egress allowlist;
+re-tested on 2026-11-04, the download succeeded (see
+tests/test_embeddings.py's semantic-retrieval regression test, which
+proves this isn't just "it imports" -- it retrieves a document whose
+text shares no vocabulary with the query, which TF-IDF provably
+cannot do). If that ever regresses in a different environment,
+get_embeddings() still falls back to OfflineTfidfEmbeddings rather
+than failing the whole pipeline -- but it logs that fallback instead
+of taking it silently, so "why did retrieval quality drop" has an
+answer in the logs.
+
+OfflineTfidfEmbeddings is kept as that tested, no-network floor and
+is still what every test that doesn't need semantic matching runs
+against (fast, deterministic, no model weights to load). It is not
+a stand-in that gets swapped out before anything works -- it is a
+real, exercised fallback path, not dead code. get_embeddings() below
+is the one seam a real embedding provider plugs into with no other
+code changes, same role as llm_narrative.generate_brief's _MODEL
+constant.
 """
 
 from __future__ import annotations
 
+import logging
 import os
 from typing import List
 
 from langchain_core.embeddings import Embeddings
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+logger = logging.getLogger(__name__)
+
+_LOCAL_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 class OfflineTfidfEmbeddings(Embeddings):
@@ -85,18 +102,71 @@ class OfflineTfidfEmbeddings(Embeddings):
         return self._vectorizer.transform([text]).toarray()[0].tolist()
 
 
+class LocalSentenceTransformerEmbeddings(Embeddings):
+    """Real semantic embeddings via a local, pretrained
+    sentence-transformers model -- no API key, no per-call network
+    (only the one-time model-weights download, cached on disk after
+    the first load). This is what actually implements "implement
+    embeddings, semantic search" rather than approximating it: the
+    vectors encode meaning learned from the model's own pretraining,
+    not just which words a document and a query happen to share.
+
+    Stateless across calls in the way that matters for correctness --
+    unlike OfflineTfidfEmbeddings, there is no fitted vocabulary to
+    go stale, so embed_documents can be called more than once (e.g.
+    for an incremental add_texts()) with no risk of the silent-
+    staleness bug that class's docstring describes. The model itself
+    is loaded once in __init__ and reused for every embed call."""
+
+    def __init__(self, model_name: str = _LOCAL_MODEL_NAME) -> None:
+        from sentence_transformers import SentenceTransformer  # noqa: PLC0415
+
+        self._model = SentenceTransformer(model_name)
+
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        if not texts:
+            return []
+        return self._model.encode(texts, show_progress_bar=False).tolist()
+
+    def embed_query(self, text: str) -> List[float]:
+        return self._model.encode([text], show_progress_bar=False)[0].tolist()
+
+
 def get_embeddings() -> Embeddings:
-    """The one seam a real embedding provider plugs into. If
-    OPENAI_API_KEY is set, uses OpenAI's real embedding API (requires
-    the optional `langchain-openai` package); otherwise, and in every
-    environment this project has actually been run in, falls back to
-    the offline TF-IDF embedder -- never silently drops to a worse
-    model without saying so."""
+    """The one seam a real embedding provider plugs into.
+
+    Preference order, each with a stated, logged reason for falling
+    through rather than a silent downgrade:
+      1. OpenAI's real embedding API, if OPENAI_API_KEY is set.
+      2. The local sentence-transformers model -- real semantic
+         embeddings, no API key required. This is the default in
+         every environment this project has actually been run in as
+         of 2026-11-04 (see embeddings.py's module docstring for the
+         history of why TF-IDF used to be the default instead).
+      3. OfflineTfidfEmbeddings, only if loading the local model
+         itself fails (no network for the one-time download, the
+         optional `sentence-transformers` package missing, or
+         anything else) -- logged, not silent, so a retrieval-quality
+         regression has a traceable cause.
+    """
     if os.environ.get("OPENAI_API_KEY"):
         try:
             from langchain_openai import OpenAIEmbeddings  # noqa: PLC0415
 
             return OpenAIEmbeddings()
         except ImportError:
-            pass
-    return OfflineTfidfEmbeddings()
+            logger.warning(
+                "OPENAI_API_KEY is set but langchain-openai is not installed; "
+                "falling through to the local sentence-transformers embedder."
+            )
+
+    try:
+        return LocalSentenceTransformerEmbeddings()
+    except Exception:  # noqa: BLE001 -- degrade, never fail vector-store build
+        logger.exception(
+            "LocalSentenceTransformerEmbeddings failed to load (no network for "
+            "the model download, missing dependency, or similar); falling back "
+            "to the deterministic, no-network OfflineTfidfEmbeddings. Retrieval "
+            "will be keyword-based, not semantic, until this is fixed."
+        )
+        return OfflineTfidfEmbeddings()

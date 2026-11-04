@@ -14,8 +14,16 @@ langchain==1.4.8
 langchain-core==1.7.4
 langchain-anthropic==1.7.9
 langchain-chroma==1.1.0
+langchain-text-splitters==1.0.0
 chromadb==1.5.9
 scikit-learn==1.9.1
 fastapi==0.162.0
 uvicorn[standard]==0.54.0
 httpx==0.28.1
+
+# Real local semantic-embedding model (rag/embeddings.py's
+# LocalSentenceTransformerEmbeddings) -- replaces TF-IDF as the
+# default embedder. Pulls in torch + transformers + huggingface_hub
+# as its own dependencies; pinned here for the same reproducibility
+# reason as the rest of this block.
+sentence-transformers==6.2.0

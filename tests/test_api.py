@@ -81,3 +81,31 @@ def test_pattern_check_runs_the_real_tool(client):
     response = client.post("/pattern-check", json={})
     assert response.status_code == 200
     assert "Live check as of" in response.json()["result"]
+
+
+def test_ask_logs_to_the_real_sqlite_query_log_and_history_reads_it_back(client):
+    """Each /ask call must leave a real row in the SQLite query log
+    (rag/query_log.py), readable back through GET /query-history's
+    real SQL (GROUP BY for mode_counts, ORDER BY ... LIMIT for
+    recent) -- not just inserted and never verified."""
+    before = client.get("/query-history").json()["total_logged"]
+
+    response = client.post(
+        "/ask", json={"question": "query-history regression probe", "offline": True}
+    )
+    assert response.status_code == 200
+
+    history = client.get("/query-history").json()
+    assert history["total_logged"] == before + 1
+    assert history["mode_counts"].get("offline", 0) >= 1
+    assert history["recent"][0]["question"] == "query-history regression probe"
+    assert history["recent"][0]["mode"] == "offline"
+
+
+def test_eval_retrieval_runs_the_real_harness_against_the_live_store(client):
+    response = client.get("/eval/retrieval")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["k"] == 4
+    assert len(body["cases"]) == 5
+    assert 0.0 <= body["precision_at_k"] <= 1.0
