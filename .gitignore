@@ -3,3 +3,10 @@ __pycache__/
 .pytest_cache/
 .env
 *.db
+
+# The fine-tuned embedder (rag/finetune_embeddings.py) -- 88MB of
+# model weights, regenerated in under 20 seconds by
+# `python3 -m rag.finetune_embeddings`, not committed, same reasoning
+# as not committing a downloaded pretrained model.
+artifacts/finetuned-embedder/
+artifacts/finetuned-embedder/_checkpoints/

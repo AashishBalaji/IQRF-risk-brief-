@@ -181,7 +181,14 @@ rag/embeddings.py       LocalSentenceTransformerEmbeddings (a real,
                         LangChain's Embeddings interface; get_embeddings()
                         is the one seam a hosted provider (OpenAI) plugs
                         into instead
-rag/vector_store.py     builds the ChromaDB collection from the corpus
+rag/vector_store.py     builds the ChromaDB collection from the corpus,
+                        and (added 2026-11-14) a FAISS index via the
+                        same corpus/embedder -- see "FAISS vector
+                        store" below
+rag/finetune_embeddings.py  (added 2026-11-14) derives real training
+                        pairs from the corpus and fine-tunes the local
+                        embedder via MultipleNegativesRankingLoss --
+                        see "Fine-tuned embedder" below
 rag/query_log.py        a real SQLite table logging every /ask call (see
                         "Real SQL" below) -- not a cache, a query-history
                         log read back with real SQL
@@ -289,6 +296,69 @@ keyword router (`route_offline`) remains the tested, no-network floor
 this agent is meant to improve on in production, not a hidden second
 decision-maker.
 
+**FAISS vector store (`rag/vector_store.py::build_faiss_vector_store`,
+added 2026-11-14):** the JD line this upgrade originally answered
+names two specific products, "vector databases such as FAISS,
+Pinecone" -- but the implementation above only ever built one of
+them (ChromaDB). Pinecone is a hosted, paid service needing an API
+key this sandbox doesn't have (the same "can't independently verify"
+situation as the live LLM-call paths below), so it's the one of the
+two that genuinely can't be built and tested here. FAISS can, and
+now is: `build_faiss_vector_store()` builds a real
+`langchain_community`-wrapped FAISS index from the exact same real
+corpus and the exact same embedder as the Chroma backend, so the two
+are a fair, like-for-like comparison. Both satisfy LangChain's
+`VectorStore` interface, so `rag/eval.py`'s retrieval-eval harness
+and `rag/rag_chain.py`'s retrieval step run against either backend
+completely unchanged -- proven, not just claimed, by
+`tests/test_vector_store.py` running the identical
+`RETRIEVAL_EVAL_CASES` against both. **Real result:** both backends
+score an identical **0.8 precision@4** on the real corpus, with the
+exact same hit/miss pattern across all five cases -- a genuinely
+informative finding, not a coincidence to wave away: with the same
+embedder and the same documents, the choice between FAISS and
+ChromaDB is purely an infrastructure decision (a server-backed store
+with built-in persistence vs. an in-process index you serialize
+yourself) and has no effect on retrieval quality here, which is
+exactly what should be true if both are implemented correctly.
+`tests/test_vector_store.py` also proves FAISS's real
+save_local/load_local persistence round-trip against a real temp
+directory, 6 tests total, all passing.
+
+**Fine-tuned embedder (`rag/finetune_embeddings.py`, added
+2026-11-14):** every embedding call elsewhere in this project uses
+`all-MiniLM-L6-v2` exactly as downloaded -- a round-table review of
+the RAG upgrade flagged that this doesn't actually satisfy the JD's
+"construct and **fine-tune** RAG systems" line literally: nothing
+in the pipeline fine-tunes anything. This closes that gap for real.
+`build_finetune_pairs()` derives 21 real (query, positive-document)
+training pairs mechanically from the project's own real corpus --
+one per real trading day's daily-summary document (12 of the 13
+real days), one per pattern-detector/escalation-rule reference
+document (6 of the 7), one per labelled illustrative sample (2), and
+one for the one real usage-log entry -- the same kind of
+programmatic weak supervision a real retrieval fine-tune uses when
+no hand-labelled query set exists, not pairs invented to flatter a
+result. The 2026-06-04 daily summary and the `detect_exit_reason_skew`
+reference document are **deliberately excluded** from training,
+because those are the exact targets `rag/eval.py`'s
+`RETRIEVAL_EVAL_CASES` evaluates against -- training on them would
+make any "improvement" meaningless. Fine-tuned via
+`MultipleNegativesRankingLoss` (in-batch negatives) through the real
+`sentence-transformers` Trainer API, 4 epochs, training loss
+1.13 -> 0.45. **Real before/after result, on the same held-out
+`RETRIEVAL_EVAL_CASES` the fine-tune never saw:** precision@4 moved
+from **0.8 to 1.0** -- the fine-tune fixed the exact templated-
+daily-summary miss documented above (`What happened on 2026-06-04?`
+now correctly retrieves that day's document), with every other case
+still hitting. Reproduce with `python3 -m rag.finetune_embeddings`
+(21 pairs, ~17s on CPU); `tests/test_finetune_embeddings.py` covers
+the pair derivation, the leakage exclusions, and a real (deliberately
+tiny, 4-pair/1-epoch) training smoke test -- the full 21-pair run and
+its before/after comparison are a reproducible real result documented
+here, not re-run on every test invocation, same reasoning as
+`live_usage_check.py` being excluded from the automated suite.
+
 **Real evaluation (`rag/eval.py`, `GET /eval/retrieval`):** two
 automated metrics address the JD's "LLM response evaluation, and
 model optimization" line, which nothing else in this project
@@ -333,18 +403,21 @@ like the `2026-06-04` `symbol_repeat_loser`/`overtrading_frequency`
 flags), both embedders (the real local semantic model's output shape
 and its synonym-retrieval advantage over TF-IDF; TF-IDF's own
 fit/embed/relative-similarity and "query before fit raises" guard as
-the tested fallback), the ChromaDB-backed offline retrieval path end
-to end, the tool router's live re-run of the real detectors, the real
-agentic tool-calling loop's dispatch-and-feedback logic (via a
-scripted model double), the retrieval precision@k and groundedness
-eval metrics (against the real corpus and real hand-checked
-examples), the real SQLite query log (insert, the `GROUP BY`
-mode-count aggregate, the `ORDER BY ... LIMIT` recency query), and
-every FastAPI endpoint (`/health`, `/ask` offline and tool-routed
-plus its SQLite logging, `/brief` for a known and an unknown date,
-`/pattern-check`, `/query-history`, `/eval/retrieval`) through
-`TestClient` against the real startup lifespan. 116 tests total
-across the project, all passing, flake8-clean.
+the tested fallback), both vector-store backends (ChromaDB and FAISS,
+proven equivalent on the real corpus -- see "FAISS vector store"
+above), the fine-tuned embedder's real training-pair derivation and a
+real training smoke test (see "Fine-tuned embedder" above), the
+ChromaDB-backed offline retrieval path end to end, the tool router's
+live re-run of the real detectors, the real agentic tool-calling
+loop's dispatch-and-feedback logic (via a scripted model double), the
+retrieval precision@k and groundedness eval metrics (against the real
+corpus and real hand-checked examples), the real SQLite query log
+(insert, the `GROUP BY` mode-count aggregate, the `ORDER BY ... LIMIT`
+recency query), and every FastAPI endpoint (`/health`, `/ask` offline
+and tool-routed plus its SQLite logging, `/brief` for a known and an
+unknown date, `/pattern-check`, `/query-history`, `/eval/retrieval`)
+through `TestClient` against the real startup lifespan. **128 tests
+total** across the project, all passing, flake8-clean.
 
 Run the API:
 
@@ -661,11 +734,12 @@ reconcile.py                payments-domain generalization: deterministic transa
 reconciliation_judge.py     the model's one judgment call in the payments domain: same / different / needs review
 run_reconciliation.py       CLI: runs the reconciliation agent end to end
 rag/                       GenAI-JD upgrade: RAG corpus/embeddings/vector store/SQL
-                           query log, real agentic tool-calling loop, eval harness
+                           query log, real agentic tool-calling loop, eval harness,
+                           FAISS backend, embedder fine-tuning (added 2026-11-14)
 api.py                     FastAPI service wrapping the CLI tools and the RAG layer
 sample_data/                two hand-built illustrative sample days
 real_data/                  the real 13-day RELIANCE history, extracted read-only from IQRF_V2's own reports
 synthetic_data/              hand-authored, clearly-labeled synthetic reconciliation demo data
-tests/                     116 tests, all passing
+tests/                     128 tests, all passing
 .github/workflows/ci.yml   lint (flake8) + full test suite on every push
 ```
